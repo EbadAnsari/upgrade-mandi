@@ -1,0 +1,61 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode/IDE files
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Environment files
+.env
+*.env
+
+# Log files
+*.log
+
+# Data files (optional - if data shouldn't be tracked)
+data/raw/
+data/cleaned/
+*.csv
+*.xlsx
+
+# Streamlit specific
+.streamlit/
+
+# Deployment files
+*.db
+*.sqlite3
+
+# Power BI files (optional)
+*.pbix
+
+# Reports and exports
+*.pdf
+*.pptx
+*.zip
+
+# Compiled files
+*.so
+*.dll
+*.egg
+*.egg-info/
+dist/
+build/
+
+*temp*
