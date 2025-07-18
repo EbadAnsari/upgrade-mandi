@@ -30,8 +30,6 @@ ENV/
 *.log
 
 # Data files (optional - if data shouldn't be tracked)
-data/raw/
-data/cleaned/
 *.csv
 *.xlsx
 
