@@ -26,40 +26,47 @@ config = {
             "Total Amount",
         ],
         "locations": {
-            "Nandanvan": {
-                "shipping-address": 'Vinayak Tower", Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan',
-                "retailer": "Swinsta",
-                "code": "NA",
-            },
-            "Dharampeth": {
-                "shipping-address": "Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
-                "retailer": "Swinsta",
-                "code": "DH",
-            },
-            "Mahal": {
-                "shipping-address": "Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR- 440027",
-                "retailer": "Rajidi",
-                "code": "MH",
-            },
             "Ayodhya Nagar": {
                 "shipping-address": "Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38,K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
                 "retailer": "Rajidi",
                 "code": "AN",
-            },
-            "Sai Mandir": {
-                "shipping-address": "Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
-                "retailer": "Swinsta",
-                "code": "S",
-            },
-            "Manish Nagar": {
-                "shipping-address": 'Ground floor "Jayanti Mansion III", Manish nagar  Nagpur Maharashtra',
-                "retailer": "Rajidi",
-                "code": "MN",
+                "storeId": "1403419"
             },
             "Byramji": {
                 "shipping-address": 'Unit nos - 59 to 71 Lower Ground Floor Ginger Square" City Survey No - 1049',
                 "retailer": "Rajidi",
                 "code": "B",
+                "storeId": "1392084"
+            },
+            "Dharampeth": {
+                "shipping-address": "Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
+                "retailer": "Swinsta",
+                "code": "DH",
+                "storeId": "1397624"
+            },
+            "Mahal": {
+                "shipping-address": "Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR- 440027",
+                "retailer": "Rajidi",
+                "code": "MH",
+                "storeId": "1393571"
+            },
+            "Manish Nagar": {
+                "shipping-address": 'Ground floor "Jayanti Mansion III", Manish nagar  Nagpur Maharashtra',
+                "retailer": "Rajidi",
+                "code": "MN",
+                "storeId": "1392532"
+            },
+            "Nandanvan": {
+                "shipping-address": 'Vinayak Tower", Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan',
+                "retailer": "Swinsta",
+                "code": "NA",
+                "storeId": "1397035"
+            },
+            "Sai Mandir": {
+                "shipping-address": "Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
+                "retailer": "Swinsta",
+                "code": "S",
+                "storeId": "1399707"
             },
         },
     },
