@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import makedirs, mkdir
 from typing import List
 
 import pandas as pd
@@ -9,7 +8,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 
-from utils import config, generateInvoiceId
+from config.utils import config, generateInvoiceId
 
 
 class PDF:
@@ -105,9 +104,9 @@ class PDF:
             style=span,
         )
 
-    def __createTable(self, location: str) -> Table:
+    def __createTable(self):
         return Table(
-            self.__preprocessData(location),
+            self.data,
             colWidths=[
                 self.__pageWidth * (p / 100) for p in self.__columnWithPercentage
             ],
@@ -125,21 +124,21 @@ class PDF:
             "",
             str(df["Total Amount"].apply(int).sum()),
         ]
-        df = (
+        self.data = (
             [[Paragraph(column, self.__headingStyle) for column in self.columns]]
             + df.values.tolist()
             + [summaryRow]
         )
 
-        for index, row in enumerate(df[1:-1], start=1):
+        for index, row in enumerate(self.data[1:-1], start=1):
             row[0] = index
             for i in range(len(row)):
                 row[i] = Paragraph(str(row[i]), self.__bodyStyle)
-        return df
 
-    def buildPDF(self):
+    def buildPDF(self, location: str):
         self.__filterData()
-        for location in self.locations.keys():
+        for location in self.locations:
+            self.__preprocessData(location)
 
             descriptionTable = self.__createDescriptionTable(
                 location,
@@ -150,14 +149,11 @@ class PDF:
             )
             descriptionTable.setStyle(self.__tableStyle)
 
-            table = self.__createTable(location)
+            table = self.__createTable()
             table.setStyle(self.__tableStyle)
 
-            # mkdir(f"./pdfs")
-            makedirs(f"./pdfs/{self.date.strftime('%m-%d-%Y')}", exist_ok=True)
-
             pdf = SimpleDocTemplate(
-                filename=f'./pdfs/{self.date.strftime("%m-%d-%Y")}/{self.date.strftime("%m-%d-%Y")} - {location}.pdf',
+                filename=f'./{self.date.strftime("%m-%d-%Y")} - {location}.pdf',
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
@@ -166,11 +162,11 @@ class PDF:
             pdf.build([descriptionTable, table])
 
             print(
-                f'PDF generated at "./pdfs/{self.date.strftime("%m-%d-%Y")}/{self.date.strftime("%m-%d-%Y")} - {location}.pdf"'
+                f'PDF generated at "./{self.date.strftime("%m-%d-%Y")} - {location}.pdf"'
             )
 
 
 if __name__ == "__main__":
-    pdf = PDF("04-17-2025", "Swiggy", config)
+    pdf = PDF("04-16-2025", "Swiggy", config)
     pdf.loadData()
-    pdf.buildPDF()
+    pdf.buildPDF("Dharampeth")
