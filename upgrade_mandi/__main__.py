@@ -1,23 +1,27 @@
-from inquirer import List, prompt
+import typer
+from pre import loadData
 
 from PDF import PDF
 
-# Raw Sheet to Notion
+if __name__ == "__main__":
 
-# Notion to Invoice PDF
-# Notion to Report PDF
+    def run(
+        file: str = typer.Option(..., "--file", "-f", help="Excel file path"),
+        domain: str = typer.Option(
+            "Swiggy", "--domain", "-d", help="Domain name ('Swiggy', 'Zomato', etc.)"
+        ),
+        invoiceVersion: int = typer.Option(
+            1, "--invoice-version", "-i", help="Invoice Version"
+        ),
+        sheetName: str = typer.Option(
+            "Sheet1",
+            "--sheet-name",
+            "-s",
+            help="Sheet name of the Excel file (default: 'Sheet1')",
+        ),
+    ):
+        data = loadData(file, sheetName, invoiceVersion)
+        pdf = PDF(data["invoice-data"], data["date"], invoiceVersion)
+        pdf.buildPDF()
 
-menu = [
-    List(
-        "operation",
-        message="Select operation",
-        choices=["Raw Sheet to Notion", "Notion to Invoice and Report"],
-    )
-]
-
-operation = prompt(menu)["operation"]
-
-# if operation == "Invoice (PDF)":
-#     pass
-# elif operation == "Generate Report":
-#     pass
+    typer.run(run)
