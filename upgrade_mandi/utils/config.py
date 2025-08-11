@@ -75,9 +75,9 @@ VIZ_CONFIG = {
     "color_palette": "husl",
 }
 
-supplierId = "74227878"
 
 domainConfigClass: DomainConfig = DomainConfig(
+    supplierId="74227878",
     columns=[
         ColumnConfig(
             columnName="Article Code",

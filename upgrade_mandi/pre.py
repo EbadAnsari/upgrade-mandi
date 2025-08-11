@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 import typer
-from utils.config import domainConfigClass, supplierId
+from utils.config import domainConfigClass
 from utils.utils import generateInvoiceId, generatePONo, nameExtracter
 
 
@@ -73,7 +73,9 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
                     pdfColumns
                 ].reset_index(drop=True),
                 "invoiceNumber": generateInvoiceId(date, location.code, invoiceVersion),
-                "poNo": generatePONo(date, location.storeId, supplierId),
+                "poNo": generatePONo(
+                    date, location.storeId, domainConfigClass.supplierId
+                ),
                 "shippingAddress": location.shippingAddress,
                 "retailer": location.retailer,
             }

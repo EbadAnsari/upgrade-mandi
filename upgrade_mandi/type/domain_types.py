@@ -47,5 +47,6 @@ class Location:
 
 @dataclass
 class DomainConfig:
+    supplierId: str = "74227878"
     columns: List[ColumnConfig] = field(default_factory=list)
     locations: List[Location] = field(default_factory=dict)
