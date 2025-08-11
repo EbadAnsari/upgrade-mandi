@@ -52,7 +52,7 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
     for column in extraColumns:
         pdfDF[column] = ""
 
-    # pdfDF = pdfDF[pdfColumns]
+    pdfDF["Article Code"] = pdfDF["Article Code"].astype(int)
 
     pdfDF["Dispatched Qty"] = pdfDF["Dispatched Qty"].astype(int)
     pdfDF["Rate"] = pdfDF["Rate"].astype(int)
@@ -65,18 +65,22 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
         )
     )
 
+    # The table does contain "Sr", "Recieved Qty", "Total Amount" column(s).
+    return (pdfDF, pdfColumns, date)
     return {
         "date": datetime.strptime(str(df["Date"][0]), "%Y-%m-%d 00:00:00"),
         "invoice-data": {
             location.locationName: {
-                "dataFrame": pdfDF[pdfDF["Location"] == location.locationName][
+                "data-frame": pdfDF[pdfDF["Location"] == location.locationName][
                     pdfColumns
                 ].reset_index(drop=True),
-                "invoiceNumber": generateInvoiceId(date, location.code, invoiceVersion),
-                "poNo": generatePONo(
+                "invoice-number": generateInvoiceId(
+                    date, location.code, invoiceVersion
+                ),
+                "po-no": generatePONo(
                     date, location.storeId, domainConfigClass.supplierId
                 ),
-                "shippingAddress": location.shippingAddress,
+                "shipping-address": location.shippingAddress,
                 "retailer": location.retailer,
             }
             for location in domainConfigClass.locations

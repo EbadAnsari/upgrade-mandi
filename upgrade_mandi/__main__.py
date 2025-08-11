@@ -1,7 +1,11 @@
-import typer
-from pre import loadData
+from os import makedirs
 
+import typer
+from Excel import toExcel
 from PDF import PDF
+from pre import loadData
+from utils.config import domainConfigClass
+from utils.converter import convert2TableFormat
 
 if __name__ == "__main__":
 
@@ -20,8 +24,17 @@ if __name__ == "__main__":
             help="Sheet name of the Excel file (default: 'Sheet1')",
         ),
     ):
-        data = loadData(file, sheetName, invoiceVersion)
-        pdf = PDF(data["invoice-data"], data["date"], invoiceVersion)
-        pdf.buildPDF()
+        rawDF, pdfColumns, date = loadData(file, sheetName, invoiceVersion)
+
+        basePath = f"./output/{date.strftime('%d-%m-%Y')}"
+        folderPathForPdf = basePath + "/pdfs"
+
+        makedirs(folderPathForPdf, exist_ok=True)
+
+        invoiceFormatedDF = convert2TableFormat(rawDF, pdfColumns, date)
+        pdf = PDF(invoiceFormatedDF, date, invoiceVersion)
+        pdf.buildPDF(folderPathForPdf)
+
+        toExcel(invoiceFormatedDF, date, basePath, invoiceVersion)
 
     typer.run(run)

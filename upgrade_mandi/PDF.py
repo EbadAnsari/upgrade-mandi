@@ -91,7 +91,7 @@ class PDF:
                     self.__headingStyle,
                 ),
                 Paragraph(
-                    f"Invoice: {self.data[location.locationName]['invoiceNumber']}",
+                    f"Invoice: {self.data[location.locationName]['invoice-number']}",
                     self.__headingStyle,
                 ),
             ],
@@ -141,19 +141,19 @@ class PDF:
                 row[i] = Paragraph(str(row[i]), self.__bodyStyle)
         return df
 
-    def buildPDF(self):
+    def buildPDF(self, folderPathForPdf: str):
 
         for location in domainConfigClass.locations:
             descriptionTable = self.__createDescriptionTable(location)
             descriptionTable.setStyle(self.__tableStyle)
 
-            table = self.__createTable(self.data[location.locationName]["dataFrame"])
+            table = self.__createTable(self.data[location.locationName]["data-frame"])
             table.setStyle(self.__tableStyle)
 
-            makedirs(f"./pdfs/{ self.__dateToStr(self.date)}", exist_ok=True)
+            # makedirs(f"./output/pdfs/", exist_ok=True)
 
             pdf = SimpleDocTemplate(
-                filename=f"./pdfs/{self.__dateToStr(self.date)}/{self.__dateToStr(self.date)} - {location.locationName}.pdf",
+                filename=f"{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
@@ -162,5 +162,5 @@ class PDF:
             pdf.build([descriptionTable, table])
 
             print(
-                f'PDF generated at "./pdfs/{self.__dateToStr(self.date)}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
+                f'PDF generated at "{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
             )

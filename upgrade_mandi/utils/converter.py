@@ -7,7 +7,7 @@ from .config import domainConfigClass
 from .utils import generateInvoiceId, generatePONo
 
 
-def conver2TableFormat(
+def convert2TableFormat(
     df: pd.DataFrame,
     selectedColumns: List[str],
     date: datetime,
@@ -15,12 +15,12 @@ def conver2TableFormat(
 ):
     return {
         location.locationName: {
-            "dataFrame": df[df["Location"] == location.locationName][
+            "data-frame": df[df["Location"] == location.locationName][
                 selectedColumns
             ].reset_index(drop=True),
-            "invoiceNumber": generateInvoiceId(date, location.code, invoiceVersion),
-            "poNo": generatePONo(date, location.storeId, domainConfigClass.supplierId),
-            "shippingAddress": location.shippingAddress,
+            "invoice-number": generateInvoiceId(date, location.code, invoiceVersion),
+            "po-no": generatePONo(date, location.storeId, domainConfigClass.supplierId),
+            "shipping-address": location.shippingAddress,
             "retailer": location.retailer,
         }
         for location in domainConfigClass.locations
