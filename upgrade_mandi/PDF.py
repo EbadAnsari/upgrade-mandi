@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import makedirs
 from os.path import join
 from typing import List
 
@@ -9,7 +8,8 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
-from utils.config import Location, domainConfigClass
+from type.domain_types import SelectDomain
+from utils.config import Location
 
 
 class PDF:
@@ -49,11 +49,13 @@ class PDF:
 
     def __init__(
         self,
+        domain: SelectDomain,
         data: dict[str, dict],
         date: datetime,
         invoiceVersion: int,
     ):
 
+        self.domain = domain
         self.data = data
         self.date = date
         self.invoiceVersion = invoiceVersion
@@ -91,12 +93,18 @@ class PDF:
                     self.__headingStyle,
                 ),
                 Paragraph(
-                    f"Invoice: {self.data[location.locationName]['invoice-number']}",
+                    f"Invoice: {location.invoiceNo(self.date)}",
                     self.__headingStyle,
                 ),
             ],
             ["", Paragraph("Email: ankushmisal7387@gmail.com", self.__headingStyle)],
-            ["", Paragraph("PO No", self.__headingStyle)],
+            [
+                "",
+                Paragraph(
+                    f"PO No: {location.poNo(self.date, location.storeId)}",
+                    self.__headingStyle,
+                ),
+            ],
         ]
         span = TableStyle([("SPAN", (0, 2), (0, 4))])
 
@@ -143,7 +151,7 @@ class PDF:
 
     def buildPDF(self, folderPathForPdf: str):
 
-        for location in domainConfigClass.locations:
+        for location in self.domain.locations:
             descriptionTable = self.__createDescriptionTable(location)
             descriptionTable.setStyle(self.__tableStyle)
 

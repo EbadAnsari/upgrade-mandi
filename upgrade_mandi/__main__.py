@@ -3,7 +3,8 @@ from os import makedirs
 import typer
 from Excel import toExcel
 from PDF import PDF
-from pre import loadData
+from pre import loadDataSwiggy
+from type.domain_types import SelectDomain
 from utils.config import domainConfigClass
 from utils.converter import convert2TableFormat
 
@@ -24,17 +25,21 @@ if __name__ == "__main__":
             help="Sheet name of the Excel file (default: 'Sheet1')",
         ),
     ):
-        rawDF, pdfColumns, date = loadData(file, sheetName, invoiceVersion)
+
+        domain: SelectDomain = domainConfigClass[domain.title()]
+        rawDF, pdfColumns, date = loadDataSwiggy(
+            file, domain, sheetName, invoiceVersion
+        )
 
         basePath = f"./output/{date.strftime('%d-%m-%Y')}"
         folderPathForPdf = basePath + "/pdfs"
 
         makedirs(folderPathForPdf, exist_ok=True)
 
-        invoiceFormatedDF = convert2TableFormat(rawDF, pdfColumns, date)
-        pdf = PDF(invoiceFormatedDF, date, invoiceVersion)
+        invoiceFormatedDF = convert2TableFormat(rawDF, domain, pdfColumns)
+        pdf = PDF(domain, invoiceFormatedDF, date, invoiceVersion)
         pdf.buildPDF(folderPathForPdf)
 
-        toExcel(invoiceFormatedDF, date, basePath, invoiceVersion)
+        toExcel(invoiceFormatedDF, domain, date, basePath, invoiceVersion)
 
     typer.run(run)

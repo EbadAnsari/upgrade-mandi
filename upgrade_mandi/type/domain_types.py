@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from datetime import datetime
+from typing import List, Literal, Optional, Union
 
 
 @dataclass
@@ -26,7 +27,7 @@ class InvoicePdfConfig(ColumnDefaultConfig):
 
 @dataclass
 class DatabaseConfig(ColumnDefaultConfig):
-    columnName: str = None
+    columnName: Optional[str]
 
 
 @dataclass
@@ -41,12 +42,39 @@ class Location:
     locationName: str
     shippingAddress: str
     retailer: str
-    code: str = None
-    storeId: str = None
+    code: str
+    storeId: Optional[str]
+    invoiceVersion: int = 1
+
+    def poNo(self, date: datetime, supplierId: str) -> str:
+        return f'{date.strftime("%Y%m%d")}-{self.storeId}-{supplierId}'
+
+    def invoiceNo(self, date: datetime) -> str:
+        return f'{date.strftime("%d%m%Y")}U{self.code}{self.invoiceVersion}'
 
 
 @dataclass
-class DomainConfig:
-    supplierId: str = "74227878"
+class CommonDomainConfig:
     columns: List[ColumnConfig] = field(default_factory=list)
-    locations: List[Location] = field(default_factory=dict)
+    locations: List[Location] = field(default_factory=list)
+    domainName: Union[Literal["Swiggy"], Literal["Zepto"]] = None
+
+
+@dataclass
+class VendorConfig:
+    vendorName: Union[Literal["Upgrade Mandi"]]
+    supplierId: Optional[str] = None
+
+
+@dataclass
+class Swiggy(CommonDomainConfig, VendorConfig):
+    # supplierId: Literal["74227878"]
+    pass
+
+
+@dataclass
+class Zepto(CommonDomainConfig, VendorConfig):
+    pass
+
+
+SelectDomain = Union[Swiggy, Zepto]

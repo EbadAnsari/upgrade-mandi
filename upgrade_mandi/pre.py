@@ -2,11 +2,11 @@ from datetime import datetime
 
 import pandas as pd
 import typer
-from utils.config import domainConfigClass
-from utils.utils import generateInvoiceId, generatePONo, nameExtracter
+from type.domain_types import Swiggy
+from utils.utils import nameExtracter
 
 
-def loadData(file: str, sheet: str, invoiceVersion: int = 1):
+def loadDataSwiggy(file: str, domain: Swiggy, sheet: str, invoiceVersion: int = 1):
 
     print("Loading Excel file...")
     df = pd.read_excel(file, sheet_name=sheet)
@@ -14,14 +14,14 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
     df = df.dropna(how="all")[
         [
             column.rawSheet.columnName
-            for column in domainConfigClass.columns
+            for column in domain.columns
             if column.rawSheet is not None
         ]
     ]
 
     df.columns = [
         column.invoicePdf.columnName
-        for column in domainConfigClass.columns
+        for column in domain.columns
         if column.rawSheet is not None
     ]
 
@@ -31,7 +31,7 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
             sorted(
                 [
                     column.invoicePdf
-                    for column in domainConfigClass.columns
+                    for column in domain.columns
                     if column.invoicePdf is not None
                     and column.invoicePdf.index is not None
                 ],
@@ -42,7 +42,7 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
 
     extraColumns = [
         column.invoicePdf.columnName
-        for column in domainConfigClass.columns
+        for column in domain.columns
         if column.rawSheet is None and column.invoicePdf is not None
     ]
 
@@ -61,31 +61,12 @@ def loadData(file: str, sheet: str, invoiceVersion: int = 1):
 
     pdfDF["Location"] = pdfDF["Location"].apply(
         lambda x: nameExtracter(
-            [location.locationName for location in domainConfigClass.locations], x
+            [location.locationName for location in domain.locations], x
         )
     )
 
     # The table does contain "Sr", "Recieved Qty", "Total Amount" column(s).
     return (pdfDF, pdfColumns, date)
-    return {
-        "date": datetime.strptime(str(df["Date"][0]), "%Y-%m-%d 00:00:00"),
-        "invoice-data": {
-            location.locationName: {
-                "data-frame": pdfDF[pdfDF["Location"] == location.locationName][
-                    pdfColumns
-                ].reset_index(drop=True),
-                "invoice-number": generateInvoiceId(
-                    date, location.code, invoiceVersion
-                ),
-                "po-no": generatePONo(
-                    date, location.storeId, domainConfigClass.supplierId
-                ),
-                "shipping-address": location.shippingAddress,
-                "retailer": location.retailer,
-            }
-            for location in domainConfigClass.locations
-        },
-    }
 
 
 if __name__ == "__main__":
@@ -105,7 +86,7 @@ if __name__ == "__main__":
             help="Sheet name of the Excel file (default: 'Sheet1')",
         ),
     ):
-        data = loadData(file, sheetName, invoiceVersion)
+        data = loadDataSwiggy(file, sheetName, invoiceVersion)
         print(data)
 
     typer.run(run)

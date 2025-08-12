@@ -5,15 +5,17 @@ Store all configuration parameters, file paths, and constants here.
 
 import os
 from pathlib import Path
+from typing import Union
 
 from dotenv import load_dotenv
 from type.domain_types import (
     ColumnConfig,
     DatabaseConfig,
-    DomainConfig,
     InvoicePdfConfig,
     Location,
     RawSheetConfig,
+    Swiggy,
+    Zepto,
 )
 
 load_dotenv()
@@ -76,336 +78,410 @@ VIZ_CONFIG = {
 }
 
 
-domainConfigClass: DomainConfig = DomainConfig(
-    supplierId="74227878",
-    columns=[
-        ColumnConfig(
-            columnName="Article Code",
-            invoicePdf=InvoicePdfConfig(columnName="Article Code", index=1),
-            rawSheet=RawSheetConfig(columnName="ITEM_CODE"),
-            database=DatabaseConfig(columnName="Article Code"),
-        ),
-        ColumnConfig(
-            columnName="Date",
-            invoicePdf=InvoicePdfConfig(columnName="Date", heading=True),
-            rawSheet=RawSheetConfig(columnName="Date"),
-            database=DatabaseConfig(columnName="Date"),
-        ),
-        ColumnConfig(
-            columnName="Dispatched Qty",
-            invoicePdf=InvoicePdfConfig(columnName="Dispatched Qty", index=4),
-            rawSheet=RawSheetConfig(columnName="Indents"),
-            database=DatabaseConfig(columnName="Dispatched Qty"),
-        ),
-        ColumnConfig(
-            columnName="Item Description",
-            invoicePdf=InvoicePdfConfig(columnName="Item Description", index=2),
-            rawSheet=RawSheetConfig(columnName="PRODUCT_NAME"),
-            database=DatabaseConfig(columnName="Item Description"),
-        ),
-        ColumnConfig(
-            columnName="Invoice No",
-            invoicePdf=InvoicePdfConfig(columnName="Invoice No", heading=True),
-            database=DatabaseConfig(columnName="Invoice No"),
-        ),
-        ColumnConfig(
-            columnName="Invoice Version",
-            database=DatabaseConfig(columnName="Invoice Version"),
-        ),
-        ColumnConfig(
-            columnName="Location",
-            invoicePdf=InvoicePdfConfig(columnName="Location", heading=True),
-            rawSheet=RawSheetConfig(columnName="STORE_NAME"),
-            database=DatabaseConfig(columnName="Location"),
-        ),
-        ColumnConfig(
-            columnName="PO No",
-            invoicePdf=InvoicePdfConfig(columnName="PO No", heading=True),
-            rawSheet=RawSheetConfig(columnName="PO Number"),
-            database=DatabaseConfig(columnName="PO No"),
-        ),
-        ColumnConfig(
-            columnName="Rate",
-            invoicePdf=InvoicePdfConfig(columnName="Rate", index=6),
-            rawSheet=RawSheetConfig(columnName="Cost"),
-            database=DatabaseConfig(columnName="Rate"),
-        ),
-        ColumnConfig(
-            columnName="Recieved Qty",
-            invoicePdf=InvoicePdfConfig(columnName="Recieved Qty", index=5),
-        ),
-        ColumnConfig(
-            columnName="Retailer",
-            invoicePdf=InvoicePdfConfig(columnName="Retailer", heading=True),
-            rawSheet=RawSheetConfig(columnName="Entity Name"),
-            database=DatabaseConfig(columnName="Retailer"),
-        ),
-        ColumnConfig(
-            columnName="Sr", invoicePdf=InvoicePdfConfig(columnName="Sr", index=0)
-        ),
-        ColumnConfig(
-            columnName="Total Amount",
-            invoicePdf=InvoicePdfConfig(columnName="Total Amount", index=7),
-            # rawSheet=RawSheetConfig(columnName="Total"),
-            database=DatabaseConfig(columnName="Total Amount"),
-        ),
-        ColumnConfig(
-            columnName="UoM",
-            invoicePdf=InvoicePdfConfig(columnName="UoM", index=3),
-            rawSheet=RawSheetConfig(columnName="WEIGHT"),
-            database=DatabaseConfig(columnName="UoM"),
-        ),
-        ColumnConfig(
-            columnName="Vendor Name",
-            invoicePdf=InvoicePdfConfig(columnName="Vendor Name", heading=True),
-            rawSheet=RawSheetConfig(columnName="VENDOR"),
-            database=DatabaseConfig(columnName="Vendor Name"),
-        ),
-    ],
-    locations=[
-        Location(
-            locationName="Ayodhya Nagar",
-            shippingAddress="Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
-            retailer="Rajidi Retail Pvt Ltd",
-            code="AN",
-            storeId="1403419",
-        ),
-        Location(
-            locationName="Byramji",
-            shippingAddress="Unit nos - 59 to 71 Lower Ground Floor Ginger Square City Survey No - 1049",
-            retailer="Rajidi Retail Pvt Ltd",
-            code="B",
-            storeId="1392084",
-        ),
-        Location(
-            locationName="Dharampeth",
-            shippingAddress="Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
-            retailer="Swinsta Ent Private Limited",
-            code="DH",
-            storeId="1397624",
-        ),
-        Location(
-            locationName="Mahal",
-            shippingAddress="Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR - 440027",
-            retailer="Rajidi Retail Pvt Ltd",
-            code="MH",
-            storeId="1393571",
-        ),
-        Location(
-            locationName="Manish Nagar",
-            shippingAddress='Ground floor "Jayanti Mansion III", Manish nagar Nagpur Maharashtra',
-            retailer="Rajidi Retail Pvt Ltd",
-            code="MN",
-            storeId="1392532",
-        ),
-        Location(
-            locationName="Nandanvan",
-            shippingAddress="Vinayak Tower, Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan",
-            retailer="Swinsta Ent Private Limited",
-            code="NA",
-            storeId="1397035",
-        ),
-        Location(
-            locationName="Sai Mandir",
-            shippingAddress="Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
-            retailer="Swinsta Ent Private Limited",
-            code="S",
-            storeId="1399707",
-        ),
-    ],
-)
-
-
-domainConfig = {
-    "Swiggy": {
-        "columns": {
-            "Article Code": {
-                "invoice-pdf": {"index": 1},
-                "raw-sheet-name": {"name": "ITEM_CODE"},
-                "notion-column-name": "Article Code",
-            },
-            "Date": {
-                "invoice-pdf": {"heading": True},
-                "raw-sheet-name": {"name": "Date"},
-                "notion-column-name": "Date",
-            },
-            "Dispatched Qty": {
-                "invoice-pdf": {
-                    "index": 4,
-                },
-                "raw-sheet-name": {"name": "Indents"},
-                "notion-column-name": "Dispatched Qty",
-            },
-            "Item Description": {
-                "invoice-pdf": {
-                    "index": 2,
-                },
-                "raw-sheet-name": {"name": "PRODUCT_NAME"},
-                "notion-column-name": "Item Description",
-            },
-            "Invoice No": {
-                "invoice-pdf": {
-                    "heading": True,
-                },
-                "notion-column-name": "Invoice No",
-            },
-            "Invoice Version": {
-                "notion-column-name": "Invoice Version",
-            },
-            "Location": {
-                "invoice-pdf": {
-                    "heading": True,
-                },
-                "raw-sheet-name": {"name": "STORE_NAME"},
-                "notion-column-name": "Location",
-            },
-            "PO No": {
-                "invoice-pdf": {
-                    "heading": True,
-                },
-                "notion-column-name": "PO No",
-                "raw-sheet-name": {"name": "PO Number"},
-            },
-            "Rate": {
-                "invoice-pdf": {
-                    "index": 6,
-                },
-                "raw-sheet-name": {"name": "Cost"},
-                "notion-column-name": "Rate",
-            },
-            "Recieved Qty": {
-                "invoice-pdf": {
-                    "index": 5,
-                },
-                "notion-database": False,
-            },
-            "Retailer": {
-                "invoice-pdf": {
-                    "heading": True,
-                },
-                "notion-column-name": "Retailer",
-                "raw-sheet-name": {"name": "Entity Name"},
-            },
-            "Sr": {
-                "invoice-pdf": {
-                    "index": 0,
-                },
-                "notion-database": False,
-            },
-            "Total Amount": {
-                "invoice-pdf": {
-                    "index": 7,
-                },
-                "notion-column-name": "Total Amount",
-            },
-            "UoM": {
-                "invoice-pdf": {
-                    "index": 3,
-                },
-                "raw-sheet-name": {"name": "WEIGHT"},
-                "notion-column-name": "UoM",
-            },
-            "Vendor Name": {
-                "invoice-pdf": {
-                    "heading": True,
-                },
-                "notion-column-name": "Vendor Name",
-                "raw-sheet-name": {"name": "VENDOR"},
-            },
-        },
-        "input-columns": [
-            "Article Code",
-            "Dispatched Qty",
-            "Item Description",
-            "Rate",
-            "Total Amount",
-            "UoM",
+domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
+    "Swiggy": Swiggy(
+        supplierId="74227878",
+        domainName="Swiggy",
+        vendorName="Upgrade Mandi",
+        columns=[
+            ColumnConfig(
+                columnName="Article Code",
+                invoicePdf=InvoicePdfConfig(columnName="Article Code", index=1),
+                rawSheet=RawSheetConfig(columnName="ITEM_CODE"),
+                database=DatabaseConfig(columnName="Article Code"),
+            ),
+            ColumnConfig(
+                columnName="Date",
+                invoicePdf=InvoicePdfConfig(columnName="Date", heading=True),
+                rawSheet=RawSheetConfig(columnName="Date"),
+                database=DatabaseConfig(columnName="Date"),
+            ),
+            ColumnConfig(
+                columnName="Dispatched Qty",
+                invoicePdf=InvoicePdfConfig(columnName="Dispatched Qty", index=4),
+                rawSheet=RawSheetConfig(columnName="Indents"),
+                database=DatabaseConfig(columnName="Dispatched Qty"),
+            ),
+            ColumnConfig(
+                columnName="Item Description",
+                invoicePdf=InvoicePdfConfig(columnName="Item Description", index=2),
+                rawSheet=RawSheetConfig(columnName="PRODUCT_NAME"),
+                database=DatabaseConfig(columnName="Item Description"),
+            ),
+            ColumnConfig(
+                columnName="Invoice No",
+                invoicePdf=InvoicePdfConfig(columnName="Invoice No", heading=True),
+                database=DatabaseConfig(columnName="Invoice No"),
+            ),
+            ColumnConfig(
+                columnName="Invoice Version",
+                database=DatabaseConfig(columnName="Invoice Version"),
+            ),
+            ColumnConfig(
+                columnName="Location",
+                invoicePdf=InvoicePdfConfig(columnName="Location", heading=True),
+                rawSheet=RawSheetConfig(columnName="STORE_NAME"),
+                database=DatabaseConfig(columnName="Location"),
+            ),
+            ColumnConfig(
+                columnName="PO No",
+                invoicePdf=InvoicePdfConfig(columnName="PO No", heading=True),
+                rawSheet=RawSheetConfig(columnName="PO Number"),
+                database=DatabaseConfig(columnName="PO No"),
+            ),
+            ColumnConfig(
+                columnName="Rate",
+                invoicePdf=InvoicePdfConfig(columnName="Rate", index=6),
+                rawSheet=RawSheetConfig(columnName="Cost"),
+                database=DatabaseConfig(columnName="Rate"),
+            ),
+            ColumnConfig(
+                columnName="Recieved Qty",
+                invoicePdf=InvoicePdfConfig(columnName="Recieved Qty", index=5),
+            ),
+            ColumnConfig(
+                columnName="Retailer",
+                invoicePdf=InvoicePdfConfig(columnName="Retailer", heading=True),
+                rawSheet=RawSheetConfig(columnName="Entity Name"),
+                database=DatabaseConfig(columnName="Retailer"),
+            ),
+            ColumnConfig(
+                columnName="Sr", invoicePdf=InvoicePdfConfig(columnName="Sr", index=0)
+            ),
+            ColumnConfig(
+                columnName="Total Amount",
+                invoicePdf=InvoicePdfConfig(columnName="Total Amount", index=7),
+                # rawSheet=RawSheetConfig(columnName="Total"),
+                database=DatabaseConfig(columnName="Total Amount"),
+            ),
+            ColumnConfig(
+                columnName="UoM",
+                invoicePdf=InvoicePdfConfig(columnName="UoM", index=3),
+                rawSheet=RawSheetConfig(columnName="WEIGHT"),
+                database=DatabaseConfig(columnName="UoM"),
+            ),
+            ColumnConfig(
+                columnName="Vendor Name",
+                invoicePdf=InvoicePdfConfig(columnName="Vendor Name", heading=True),
+                rawSheet=RawSheetConfig(columnName="VENDOR"),
+                database=DatabaseConfig(columnName="Vendor Name"),
+            ),
         ],
-        "database-columns": [
-            "Article Code",
-            "Date",
-            "Dispatched Qty",
-            "Invoice No",
-            "Invoice Version",
-            "Item Description",
-            "Location",
-            "Rate",
-            "Total Amount",
-            "UoM",
+        locations=[
+            Location(
+                locationName="Ayodhya Nagar",
+                shippingAddress="Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
+                retailer="Rajidi Retail Pvt Ltd",
+                code="AN",
+                storeId="1403419",
+            ),
+            Location(
+                locationName="Byramji",
+                shippingAddress="Unit nos - 59 to 71 Lower Ground Floor Ginger Square City Survey No - 1049",
+                retailer="Rajidi Retail Pvt Ltd",
+                code="B",
+                storeId="1392084",
+            ),
+            Location(
+                locationName="Dharampeth",
+                shippingAddress="Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
+                retailer="Swinsta Ent Private Limited",
+                code="DH",
+                storeId="1397624",
+            ),
+            Location(
+                locationName="Mahal",
+                shippingAddress="Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR - 440027",
+                retailer="Rajidi Retail Pvt Ltd",
+                code="MH",
+                storeId="1393571",
+            ),
+            Location(
+                locationName="Manish Nagar",
+                shippingAddress='Ground floor "Jayanti Mansion III", Manish nagar Nagpur Maharashtra',
+                retailer="Rajidi Retail Pvt Ltd",
+                code="MN",
+                storeId="1392532",
+            ),
+            Location(
+                locationName="Nandanvan",
+                shippingAddress="Vinayak Tower, Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan",
+                retailer="Swinsta Ent Private Limited",
+                code="NA",
+                storeId="1397035",
+            ),
+            Location(
+                locationName="Sai Mandir",
+                shippingAddress="Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
+                retailer="Swinsta Ent Private Limited",
+                code="S",
+                storeId="1399707",
+            ),
         ],
-        "output-columns": [
-            "Article Code",
-            "Dispatched Qty",
-            "Item Description",
-            "Rate",
-            "Recieved Qty",
-            "Sr",
-            "Total Amount",
-            "UoM",
-        ],
-        "locations": {
-            "Ayodhya Nagar": {
-                "shipping-address": "Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
-                "retailer": "Rajidi",
-                "code": "AN",
-                "storeId": "1403419",
-            },
-            "Byramji": {
-                "shipping-address": "Unit nos - 59 to 71 Lower Ground Floor Ginger Square City Survey No - 1049",
-                "retailer": "Rajidi",
-                "code": "B",
-                "storeId": "1392084",
-            },
-            "Dharampeth": {
-                "shipping-address": "Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
-                "retailer": "Swinsta",
-                "code": "DH",
-                "storeId": "1397624",
-            },
-            "Mahal": {
-                "shipping-address": "Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR - 440027",
-                "retailer": "Rajidi",
-                "code": "MH",
-                "storeId": "1393571",
-            },
-            "Manish Nagar": {
-                "shipping-address": 'Ground floor "Jayanti Mansion III", Manish nagar Nagpur Maharashtra',
-                "retailer": "Rajidi",
-                "code": "MN",
-                "storeId": "1392532",
-            },
-            "Nandanvan": {
-                "shipping-address": "Vinayak Tower, Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan",
-                "retailer": "Swinsta",
-                "code": "NA",
-                "storeId": "1397035",
-            },
-            "Sai Mandir": {
-                "shipping-address": "Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
-                "retailer": "Swinsta",
-                "code": "S",
-                "storeId": "1399707",
-            },
-        },
-    },
-    "Zepto": {
-        "columns": [
-            "No",
-            "Article Name",
-            "UoM",
-            "Invoice Qty.",
-            "Rate",
-            "Amount",
-        ],
-        "locations": {
-            "Gokulpeth": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Mahada": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Khamla": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Garoba Maidan": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Raghuji Nagar": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Zingabai Takli": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Bhupesh Nagar": {"shipping-address": "", "retailer": "Dorgheria"},
-            "Besa": {"shipping-address": "", "retailer": "Dorgheria"},
-        },
-    },
+    ),
+    # "Zepto": Zepto(
+    #     vendorName="Upgrade Mandi",
+    #     domainName="Zepto",
+    #     columns=[
+    #         ColumnConfig(
+    #             columnName="No",
+    #             invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+    #         ),
+    #         ColumnConfig(
+    #             columnName="Article Name",
+    #             invoicePdf=InvoicePdfConfig(columnName="Article Name", index=1),
+    #             rawSheet=RawSheetConfig(columnName="Product Name"),
+    #             database=DatabaseConfig(columnName="Article Name"),
+    #         ),
+    #         ColumnConfig(
+    #             columnName="Invoice Qty.",
+    #             invoicePdf=InvoicePdfConfig(columnName="Invoice Qty.", index=2),
+    #             database=DatabaseConfig(columnName="Invoice Qty."),
+    #         ),
+    #         ColumnConfig(
+    #             columnName="UoM",
+    #             invoicePdf=InvoicePdfConfig(columnName="UoM", index=2),
+    #             rawSheet=RawSheetConfig(columnName="UoM"),
+    #             database=DatabaseConfig(columnName="UoM"),
+    #         ),
+    #         ColumnConfig(
+    #             columnName="Vendor Name",
+    #             rawSheet=RawSheetConfig(columnName="Vendor Name"),
+    #             database=DatabaseConfig(columnName="Vendor Name"),
+    #         ),
+    #     ],
+    #     locations=[
+    #         Location(
+    #             locationName="Besa",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Besa Kh. No. 82/3 Jayanti Nagari VII, Nagpur (Urban), Nagpur Nagpur 440037",
+    #             retailer="Dorgheria",
+    #             code="B",
+    #         ),
+    #         Location(
+    #             locationName="Bhupesh Nagar",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Bhupesh Nagar 236/B/28 & 236/B/28/A, Gorewada Road, Yogendra Nagar, Near Blue Daimond School, Nagpur. Maharashtra Maharashtra Nagpur 440013",
+    #             retailer="Dorgheria",
+    #             code="BN",
+    #         ),
+    #         Location(
+    #             locationName="Garoba Maidan",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Garoba Maidan, NIT Plot No. 1125 to 1135, 1191 to 1199, H. No. 1288/H/6, 1288/H/7, Near Jagnade Square, KDK College Road, Nandanwan, Nagpur 440009",
+    #             retailer="Dorgheria",
+    #             code="GM",
+    #         ),
+    #         Location(
+    #             locationName="Khamala",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Khamala Nagpur",
+    #             retailer="Dorgheria",
+    #             code="K",
+    #         ),
+    #         Location(
+    #             locationName="Raghuji Nagar",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Raghuji Nagar Pragati Sabhgruh, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440024 Nagpur 440024",
+    #             retailer="Dorgheria",
+    #             code="R",
+    #         ),
+    #         Location(
+    #             locationName="Zingabai Takali",
+    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Zingabai Takali Pandurang Mangal Karyalaya, 561/A, Grenada Bandhu Nagar, Zingabai Takali, Nagpur 440030",
+    #             retailer="Dorgheria",
+    #             code="Z",
+    #         ),
+    #     ],
+    # ),
 }
+
+
+# domainConfig = {
+#     "Swiggy": {
+#         "columns": {
+#             "Article Code": {
+#                 "invoice-pdf": {"index": 1},
+#                 "raw-sheet-name": {"name": "ITEM_CODE"},
+#                 "notion-column-name": "Article Code",
+#             },
+#             "Date": {
+#                 "invoice-pdf": {"heading": True},
+#                 "raw-sheet-name": {"name": "Date"},
+#                 "notion-column-name": "Date",
+#             },
+#             "Dispatched Qty": {
+#                 "invoice-pdf": {
+#                     "index": 4,
+#                 },
+#                 "raw-sheet-name": {"name": "Indents"},
+#                 "notion-column-name": "Dispatched Qty",
+#             },
+#             "Item Description": {
+#                 "invoice-pdf": {
+#                     "index": 2,
+#                 },
+#                 "raw-sheet-name": {"name": "PRODUCT_NAME"},
+#                 "notion-column-name": "Item Description",
+#             },
+#             "Invoice No": {
+#                 "invoice-pdf": {
+#                     "heading": True,
+#                 },
+#                 "notion-column-name": "Invoice No",
+#             },
+#             "Invoice Version": {
+#                 "notion-column-name": "Invoice Version",
+#             },
+#             "Location": {
+#                 "invoice-pdf": {
+#                     "heading": True,
+#                 },
+#                 "raw-sheet-name": {"name": "STORE_NAME"},
+#                 "notion-column-name": "Location",
+#             },
+#             "PO No": {
+#                 "invoice-pdf": {
+#                     "heading": True,
+#                 },
+#                 "notion-column-name": "PO No",
+#                 "raw-sheet-name": {"name": "PO Number"},
+#             },
+#             "Rate": {
+#                 "invoice-pdf": {
+#                     "index": 6,
+#                 },
+#                 "raw-sheet-name": {"name": "Cost"},
+#                 "notion-column-name": "Rate",
+#             },
+#             "Recieved Qty": {
+#                 "invoice-pdf": {
+#                     "index": 5,
+#                 },
+#                 "notion-database": False,
+#             },
+#             "Retailer": {
+#                 "invoice-pdf": {
+#                     "heading": True,
+#                 },
+#                 "notion-column-name": "Retailer",
+#                 "raw-sheet-name": {"name": "Entity Name"},
+#             },
+#             "Sr": {
+#                 "invoice-pdf": {
+#                     "index": 0,
+#                 },
+#                 "notion-database": False,
+#             },
+#             "Total Amount": {
+#                 "invoice-pdf": {
+#                     "index": 7,
+#                 },
+#                 "notion-column-name": "Total Amount",
+#             },
+#             "UoM": {
+#                 "invoice-pdf": {
+#                     "index": 3,
+#                 },
+#                 "raw-sheet-name": {"name": "WEIGHT"},
+#                 "notion-column-name": "UoM",
+#             },
+#             "Vendor Name": {
+#                 "invoice-pdf": {
+#                     "heading": True,
+#                 },
+#                 "notion-column-name": "Vendor Name",
+#                 "raw-sheet-name": {"name": "VENDOR"},
+#             },
+#         },
+#         "input-columns": [
+#             "Article Code",
+#             "Dispatched Qty",
+#             "Item Description",
+#             "Rate",
+#             "Total Amount",
+#             "UoM",
+#         ],
+#         "database-columns": [
+#             "Article Code",
+#             "Date",
+#             "Dispatched Qty",
+#             "Invoice No",
+#             "Invoice Version",
+#             "Item Description",
+#             "Location",
+#             "Rate",
+#             "Total Amount",
+#             "UoM",
+#         ],
+#         "output-columns": [
+#             "Article Code",
+#             "Dispatched Qty",
+#             "Item Description",
+#             "Rate",
+#             "Recieved Qty",
+#             "Sr",
+#             "Total Amount",
+#             "UoM",
+#         ],
+#         "locations": {
+#             "Ayodhya Nagar": {
+#                 "shipping-address": "Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
+#                 "retailer": "Rajidi",
+#                 "code": "AN",
+#                 "storeId": "1403419",
+#             },
+#             "Byramji": {
+#                 "shipping-address": "Unit nos - 59 to 71 Lower Ground Floor Ginger Square City Survey No - 1049",
+#                 "retailer": "Rajidi",
+#                 "code": "B",
+#                 "storeId": "1392084",
+#             },
+#             "Dharampeth": {
+#                 "shipping-address": "Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
+#                 "retailer": "Swinsta",
+#                 "code": "DH",
+#                 "storeId": "1397624",
+#             },
+#             "Mahal": {
+#                 "shipping-address": "Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR - 440027",
+#                 "retailer": "Rajidi",
+#                 "code": "MH",
+#                 "storeId": "1393571",
+#             },
+#             "Manish Nagar": {
+#                 "shipping-address": 'Ground floor "Jayanti Mansion III", Manish nagar Nagpur Maharashtra',
+#                 "retailer": "Rajidi",
+#                 "code": "MN",
+#                 "storeId": "1392532",
+#             },
+#             "Nandanvan": {
+#                 "shipping-address": "Vinayak Tower, Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan",
+#                 "retailer": "Swinsta",
+#                 "code": "NA",
+#                 "storeId": "1397035",
+#             },
+#             "Sai Mandir": {
+#                 "shipping-address": "Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
+#                 "retailer": "Swinsta",
+#                 "code": "S",
+#                 "storeId": "1399707",
+#             },
+#         },
+#     },
+#     "Zepto": {
+#         "columns": [
+#             "No",
+#             "Article Name",
+#             "UoM",
+#             "Invoice Qty.",
+#             "Rate",
+#             "Amount",
+#         ],
+#         "locations": {
+#             "Gokulpeth": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Mahada": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Khamla": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Garoba Maidan": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Raghuji Nagar": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Zingabai Takli": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Bhupesh Nagar": {"shipping-address": "", "retailer": "Dorgheria"},
+#             "Besa": {"shipping-address": "", "retailer": "Dorgheria"},
+#         },
+#     },
+# }

@@ -1,17 +1,21 @@
 from datetime import datetime
 
 import pandas as pd
-from utils.config import domainConfigClass
+from type.domain_types import SelectDomain
 
 
 def toExcel(
-    df: pd.DataFrame, date: datetime, baseFolerPath: str, invoiceVersion: int = 1
+    df: pd.DataFrame,
+    domain: SelectDomain,
+    date: datetime,
+    baseFolerPath: str,
+    invoiceVersion: int = 1,
 ):
     stringDate = date.strftime("%d-%m-%Y")
     with pd.ExcelWriter(
         f"{baseFolerPath}/{stringDate}.xlsx", engine="xlsxwriter"
     ) as xlW:
-        for loaction in domainConfigClass.locations:
+        for loaction in domain.locations:
             activeDF = df[loaction.locationName]["data-frame"]
             activeDF["Sr"] = range(1, len(activeDF) + 1)
 
@@ -55,16 +59,14 @@ def toExcel(
             )
 
             # Merge cells for header information
-            workSheet.merge_range(
-                0, 0, 0, 2, df[loaction.locationName]["retailer"], headerCellFormat
-            )
+            workSheet.merge_range(0, 0, 0, 2, loaction.retailer, headerCellFormat)
             workSheet.merge_range(1, 0, 1, 2, loaction.locationName, headerCellFormat)
             workSheet.merge_range(
                 2,
                 0,
                 4,
                 2,
-                f'Shipping Address: {df[loaction.locationName]["shipping-address"]}',
+                f"Shipping Address: {loaction.shippingAddress}",
                 headerCellFormat,
             )
 
@@ -77,7 +79,7 @@ def toExcel(
                 3,
                 2,
                 7,
-                f'Invoice: {df[loaction.locationName]["invoice-number"]}',
+                f"Invoice: {loaction.invoiceNo(date)}",
                 headerCellFormat,
             )
             workSheet.merge_range(
@@ -88,7 +90,7 @@ def toExcel(
                 3,
                 4,
                 7,
-                f'PO No: {df[loaction.locationName]["po-no"]}',
+                f"PO No: {loaction.poNo(date, domain.supplierId)}",
                 headerCellFormat,
             )
 

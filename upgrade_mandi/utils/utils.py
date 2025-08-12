@@ -4,8 +4,6 @@ from typing import List
 
 import pandas as pd
 
-from .config import domainConfig
-
 
 def generateInvoiceId(date: datetime, code: str, invoiceVersion: int):
     return f'{date.strftime("%d%m%Y")}U{code}{invoiceVersion}'
@@ -34,12 +32,12 @@ def notionObject2DataFrame(notionObject):
     return pd.DataFrame([data])
 
 
-def extractPDFColumnNames(domain: str):
-    return [
-        columnName
-        for columnName, columnValue in domainConfig[domain].items()
-        if "invoice-pdf" in columnValue and "index" in columnValue["invoice-pdf"]
-    ]
+# def extractPDFColumnNames(domain: str):
+#     return [
+#         columnName
+#         for columnName, columnValue in domainConfig[domain].items()
+#         if "invoice-pdf" in columnValue and "index" in columnValue["invoice-pdf"]
+#     ]
 
 
 def nameExtracter(rightNamesList: List[str], wrongName: str) -> str:
