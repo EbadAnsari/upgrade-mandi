@@ -169,6 +169,13 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
         ],
         locations=[
             Location(
+                locationName="Amravati",
+                shippingAddress="Ground floor Nazul Plot No. 72 Nazul Sheet No. 46d Sabanis Plot Kawar Nagar To Rukhmini Nagar Road Amravati 444606",
+                retailer="Rajidi Retail Pvt Ltd",
+                code="AMD",
+                storeId="1402771",
+            ),
+            Location(
                 locationName="Ayodhya Nagar",
                 shippingAddress="Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
                 retailer="Rajidi Retail Pvt Ltd",
