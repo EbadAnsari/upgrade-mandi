@@ -1,45 +1,26 @@
-from os import makedirs
-
-import typer
-from Excel import toExcel
-from PDF import PDF
-from pre import loadDataSwiggy
-from type.domain_types import SelectDomain
-from utils.config import domainConfigClass
-from utils.converter import convert2TableFormat
+import pandas as pd
+from um import main
+from utils import console, types
 
 if __name__ == "__main__":
 
-    def run(
-        file: str = typer.Option(..., "--file", "-f", help="Excel file path"),
-        domain: str = typer.Option(
-            "Swiggy", "--domain", "-d", help="Domain name ('Swiggy', 'Zomato', etc.)"
-        ),
-        invoiceVersion: int = typer.Option(
-            1, "--invoice-version", "-i", help="Invoice Version"
-        ),
-        sheetName: str = typer.Option(
-            "Sheet1",
-            "--sheet-name",
-            "-s",
-            help="Sheet name of the Excel file (default: 'Sheet1')",
-        ),
-    ):
+    console.clear()
 
-        domain: SelectDomain = domainConfigClass[domain.title()]
-        rawDF, pdfColumns, date = loadDataSwiggy(
-            file, domain, sheetName, invoiceVersion
+    file = console.selectRawExcelFile()
+
+    sheetNames = pd.ExcelFile(file).sheet_names
+    if len(sheetNames) > 1:
+        sheetName = console.selectBox("Select a sheet", sheetNames)
+    else:
+        sheetName = sheetNames[0]
+    domain = console.selectDomain()
+
+    date = None
+    if domain == "Zepto":
+        date = types.Date(
+            console.prompt("Enter the date in DD-MM-YYYY format: ").strip()
         )
 
-        basePath = f"./output/{date.strftime('%d-%m-%Y')}"
-        folderPathForPdf = basePath + "/pdfs"
+    invoiceVersion = int(console.readInvoiceVersion())
 
-        makedirs(folderPathForPdf, exist_ok=True)
-
-        invoiceFormatedDF = convert2TableFormat(rawDF, domain, pdfColumns)
-        pdf = PDF(domain, invoiceFormatedDF, date, invoiceVersion)
-        pdf.buildPDF(folderPathForPdf)
-
-        toExcel(invoiceFormatedDF, domain, date, basePath, invoiceVersion)
-
-    typer.run(run)
+    main(file, domain, invoiceVersion, sheetName, date)

@@ -1,43 +1,18 @@
+import os
 from collections import Counter
-from datetime import datetime
+from glob import glob
+from os.path import getmtime, join
 from typing import List
 
-import pandas as pd
+from . import config, types
 
 
-def generateInvoiceId(date: datetime, code: str, invoiceVersion: int):
-    return f'{date.strftime("%d%m%Y")}U{code}{invoiceVersion}'
+def generateInvoiceId(date: types.Date, code: str, invoiceVersion: int):
+    return f'{date.toString(sep="")}U{code}{invoiceVersion}'
 
 
-def generatePONo(date: datetime, storeId: str, supplierId: str):
-    return f'{date.strftime("%Y%m%d")}-{storeId}-{supplierId}'
-
-
-def notionObject2DataFrame(notionObject):
-    data = {}
-    for key, value in notionObject["properties"].items():
-        if value["type"] == "title":
-            data[key] = value["title"][0]["plain_text"]
-        elif value["type"] == "select":
-            data[key] = value["select"]["name"]
-        elif value["type"] == "number":
-            data[key] = value["number"]
-        elif value["type"] == "date":
-            data[key] = value["date"]["start"]
-        elif value["type"] == "formula":
-            if "string" in value["formula"]:
-                data[key] = value["formula"]["string"]
-            elif "number" in value["formula"]:
-                data[key] = value["formula"]["number"]
-    return pd.DataFrame([data])
-
-
-# def extractPDFColumnNames(domain: str):
-#     return [
-#         columnName
-#         for columnName, columnValue in domainConfig[domain].items()
-#         if "invoice-pdf" in columnValue and "index" in columnValue["invoice-pdf"]
-#     ]
+def generatePONo(date: types.Date, storeId: str, supplierId: str):
+    return f'{date.toString(sep="", order="YMD")}-{storeId}-{supplierId}'
 
 
 def nameExtracter(rightNamesList: List[str], wrongName: str) -> str:
@@ -52,5 +27,11 @@ def nameExtracter(rightNamesList: List[str], wrongName: str) -> str:
             / (sum(counterOriginal.values()) + sum(counterLocation.values()))
         )
     return rightNamesList[chances.index(max(chances))]
-    return rightNamesList[chances.index(max(chances))]
-    return rightNamesList[chances.index(max(chances))]
+
+
+def fileInRawSheet() -> List[str]:
+    return sorted(
+        glob(join(config.PROJECT_SRC, "raw-sheets-dump", "*.xlsx")),
+        key=getmtime,
+        reverse=True,
+    )

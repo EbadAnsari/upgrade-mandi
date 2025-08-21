@@ -8,23 +8,23 @@ from pathlib import Path
 from typing import Union
 
 from dotenv import load_dotenv
-from type.domain_types import (
+
+from .types import (
     ColumnConfig,
     DatabaseConfig,
     InvoicePdfConfig,
     Location,
+    Mobile,
     RawSheetConfig,
     Swiggy,
+    VendorConfig,
     Zepto,
 )
 
 load_dotenv()
 
-NOTION_AUTH = os.getenv("NOTION_AUTH")
-NOTION_SWIGGY_DATABASE_ID = os.getenv("NOTION_SWIGGY_DATABASE_ID")
-
 # Project root directory
-PROJECT_SRC = Path(__file__).parent
+PROJECT_SRC = Path(__file__).parent.parent
 
 # Data directories
 DATA_DIR = PROJECT_SRC / "data"
@@ -80,9 +80,15 @@ VIZ_CONFIG = {
 
 domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
     "Swiggy": Swiggy(
-        supplierId="74227878",
         domainName="Swiggy",
-        vendorName="Upgrade Mandi",
+        vendor=VendorConfig(
+            name="Upgrade Mandi",
+            code="U",
+            email="ankushmisal7387@gmail.com",
+            mobile=Mobile(countryCode="+91", number="1234567890"),
+            supplierId="74227878",
+            dispatchedAddress=None,
+        ),
         columns=[
             ColumnConfig(
                 columnName="Article Code",
@@ -226,76 +232,103 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
             ),
         ],
     ),
-    # "Zepto": Zepto(
-    #     vendorName="Upgrade Mandi",
-    #     domainName="Zepto",
-    #     columns=[
-    #         ColumnConfig(
-    #             columnName="No",
-    #             invoicePdf=InvoicePdfConfig(columnName="No", index=0),
-    #         ),
-    #         ColumnConfig(
-    #             columnName="Article Name",
-    #             invoicePdf=InvoicePdfConfig(columnName="Article Name", index=1),
-    #             rawSheet=RawSheetConfig(columnName="Product Name"),
-    #             database=DatabaseConfig(columnName="Article Name"),
-    #         ),
-    #         ColumnConfig(
-    #             columnName="Invoice Qty.",
-    #             invoicePdf=InvoicePdfConfig(columnName="Invoice Qty.", index=2),
-    #             database=DatabaseConfig(columnName="Invoice Qty."),
-    #         ),
-    #         ColumnConfig(
-    #             columnName="UoM",
-    #             invoicePdf=InvoicePdfConfig(columnName="UoM", index=2),
-    #             rawSheet=RawSheetConfig(columnName="UoM"),
-    #             database=DatabaseConfig(columnName="UoM"),
-    #         ),
-    #         ColumnConfig(
-    #             columnName="Vendor Name",
-    #             rawSheet=RawSheetConfig(columnName="Vendor Name"),
-    #             database=DatabaseConfig(columnName="Vendor Name"),
-    #         ),
-    #     ],
-    #     locations=[
-    #         Location(
-    #             locationName="Besa",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Besa Kh. No. 82/3 Jayanti Nagari VII, Nagpur (Urban), Nagpur Nagpur 440037",
-    #             retailer="Dorgheria",
-    #             code="B",
-    #         ),
-    #         Location(
-    #             locationName="Bhupesh Nagar",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Bhupesh Nagar 236/B/28 & 236/B/28/A, Gorewada Road, Yogendra Nagar, Near Blue Daimond School, Nagpur. Maharashtra Maharashtra Nagpur 440013",
-    #             retailer="Dorgheria",
-    #             code="BN",
-    #         ),
-    #         Location(
-    #             locationName="Garoba Maidan",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Garoba Maidan, NIT Plot No. 1125 to 1135, 1191 to 1199, H. No. 1288/H/6, 1288/H/7, Near Jagnade Square, KDK College Road, Nandanwan, Nagpur 440009",
-    #             retailer="Dorgheria",
-    #             code="GM",
-    #         ),
-    #         Location(
-    #             locationName="Khamala",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Khamala Nagpur",
-    #             retailer="Dorgheria",
-    #             code="K",
-    #         ),
-    #         Location(
-    #             locationName="Raghuji Nagar",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Raghuji Nagar Pragati Sabhgruh, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440024 Nagpur 440024",
-    #             retailer="Dorgheria",
-    #             code="R",
-    #         ),
-    #         Location(
-    #             locationName="Zingabai Takali",
-    #             shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Zingabai Takali Pandurang Mangal Karyalaya, 561/A, Grenada Bandhu Nagar, Zingabai Takali, Nagpur 440030",
-    #             retailer="Dorgheria",
-    #             code="Z",
-    #         ),
-    #     ],
-    # ),
+    "Zepto": Zepto(
+        domainName="Zepto",
+        vendor=VendorConfig(
+            name="Upgrade Mandi",
+            code="UM",
+            email="ankushmisal7387@gmail.com",
+            dispatchedAddress="Plot no 147 Bajrang Nagar, Manewada, Nagpur-440027",
+            mobile=Mobile("+91", "7385994320"),
+            supplierId=None,
+        ),
+        columns=[
+            ColumnConfig(
+                columnName="Article Name",
+                invoicePdf=InvoicePdfConfig(columnName="Article Name", index=1),
+                rawSheet=RawSheetConfig(columnName="Product Name"),
+                database=DatabaseConfig(columnName="Article Name"),
+            ),
+            ColumnConfig(
+                columnName="Invoice Qty.",
+                invoicePdf=InvoicePdfConfig(columnName="Invoice Qty.", index=2),
+                database=DatabaseConfig(columnName="Invoice Qty."),
+            ),
+            ColumnConfig(
+                columnName="No",
+                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+            ),
+            ColumnConfig(
+                columnName="Rate",
+                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+            ),
+            ColumnConfig(
+                columnName="Recieved Qty.",
+                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+            ),
+            ColumnConfig(
+                columnName="UoM",
+                invoicePdf=InvoicePdfConfig(columnName="UoM", index=2),
+                rawSheet=RawSheetConfig(columnName="UoM"),
+                database=DatabaseConfig(columnName="UoM"),
+            ),
+            ColumnConfig(
+                columnName="Vendor Name",
+                rawSheet=RawSheetConfig(columnName="Vendor Name"),
+                database=DatabaseConfig(columnName="Vendor Name"),
+            ),
+        ],
+        locations=[
+            Location(
+                locationName="Besa",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Besa Kh. No. 82/3 Jayanti Nagari VII, Nagpur (Urban), Nagpur Nagpur 440037",
+                retailer="Dorgheria",
+                code="B",
+            ),
+            Location(
+                locationName="Bhupesh Nagar",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Bhupesh Nagar 236/B/28 & 236/B/28/A, Gorewada Road, Yogendra Nagar, Near Blue Daimond School, Nagpur. Maharashtra Maharashtra Nagpur 440013",
+                retailer="Dorgheria",
+                code="BN",
+            ),
+            Location(
+                locationName="Garoba Maidan",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Garoba Maidan, NIT Plot No. 1125 to 1135, 1191 to 1199, H. No. 1288/H/6, 1288/H/7, Near Jagnade Square, KDK College Road, Nandanwan, Nagpur 440009",
+                retailer="Dorgheria",
+                code="GM",
+            ),
+            Location(
+                locationName="Gokulpeth",
+                shippingAddress="DROGHERIA SELLERS PVT LTD,DS-NAG-Gokulpeth 151 Agrawal building, Ravi nagarsquare ,Gokul peth ward, Nagpur 440033",
+                retailer="Dorgheria",
+                code="GM",
+            ),
+            Location(
+                locationName="Jaripatka",
+                shippingAddress="Jaripatka, Nagpur 440030",
+                retailer="Dorgheria",
+                code="J",
+            ),
+            Location(
+                locationName="Khamala",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Khamala Nagpur",
+                retailer="Dorgheria",
+                code="K",
+            ),
+            Location(
+                locationName="Raghuji Nagar",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Raghuji Nagar Pragati Sabhgruh, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440024 Nagpur 440024",
+                retailer="Dorgheria",
+                code="R",
+            ),
+            Location(
+                locationName="Zingabai Takali",
+                shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Zingabai Takali Pandurang Mangal Karyalaya, 561/A, Grenada Bandhu Nagar, Zingabai Takali, Nagpur 440030",
+                retailer="Dorgheria",
+                code="Z",
+            ),
+        ],
+    ),
 }
 
 

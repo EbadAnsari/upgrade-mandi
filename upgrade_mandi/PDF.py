@@ -1,4 +1,3 @@
-from datetime import datetime
 from os.path import join
 from typing import List
 
@@ -8,8 +7,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
-from type.domain_types import SelectDomain
-from utils.config import Location
+from utils import types
 
 
 class PDF:
@@ -37,21 +35,11 @@ class PDF:
     __pageWidth = 550
     __columnWithPercentage = [6, 12, 22, 12, 12, 16, 8, 12]
 
-    __OUTPUT_Folder = join(".", "output")
-    # __OUTPUT_REPORT_FOLDER = join(__OUTPUT_Folder, "reports")
-
-    def __dateToStr(self, date: datetime, sep="-", monthFirst: bool = True) -> str:
-        """Convert date string to datetime object."""
-        if monthFirst:
-            return date.strftime(f"%m{sep}%d{sep}%Y")
-        else:
-            return date.strftime(f"%d{sep}%m{sep}%Y")
-
     def __init__(
         self,
-        domain: SelectDomain,
+        domain: types.DomainSelection,
         data: dict[str, dict],
-        date: datetime,
+        date: types.Date,
         invoiceVersion: int,
     ):
 
@@ -62,7 +50,7 @@ class PDF:
 
     def __createDescriptionTable(
         self,
-        location: Location,
+        location: types.Location,
     ) -> Table:
         vendorName = "Upgrade Mandi"
 
@@ -83,7 +71,7 @@ class PDF:
                     self.__headingStyle,
                 ),
                 Paragraph(
-                    f'Date: {self.__dateToStr(self.date, sep="/", monthFirst=False)}',
+                    f'Date: {self.date.toString(sep="/", order="MDY")}',
                     self.__headingStyle,
                 ),
             ],
@@ -93,7 +81,7 @@ class PDF:
                     self.__headingStyle,
                 ),
                 Paragraph(
-                    f"Invoice: {location.invoiceNo(self.date)}",
+                    f"Invoice: {location.invoiceNo(self.date, self.domain.vendor.code)}",
                     self.__headingStyle,
                 ),
             ],
@@ -151,17 +139,23 @@ class PDF:
 
     def buildPDF(self, folderPathForPdf: str):
 
+        totalPdfCreationCount = []
+        unCreatedPdfsCount = []
         for location in self.domain.locations:
+            activeDf = self.data[location.locationName]
+
+            if activeDf.empty:
+                unCreatedPdfsCount.append(location.locationName)
+                continue
+
             descriptionTable = self.__createDescriptionTable(location)
             descriptionTable.setStyle(self.__tableStyle)
 
-            table = self.__createTable(self.data[location.locationName]["data-frame"])
+            table = self.__createTable(activeDf)
             table.setStyle(self.__tableStyle)
 
-            # makedirs(f"./output/pdfs/", exist_ok=True)
-
             pdf = SimpleDocTemplate(
-                filename=f"{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf",
+                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.locationName}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
@@ -169,6 +163,9 @@ class PDF:
 
             pdf.build([descriptionTable, table])
 
-            print(
-                f'PDF generated at "{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
-            )
+            # print(
+            # f'PDF generated at "{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
+            # )
+            totalPdfCreationCount.append(location.locationName)
+        print(f"Total PDFs created: {len(totalPdfCreationCount)}")
+        print(f"PDFs not created: {unCreatedPdfsCount}")
