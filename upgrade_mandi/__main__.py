@@ -1,8 +1,12 @@
+from os import makedirs
+
 import pandas as pd
 from um import main
 from utils import console, types
 
 if __name__ == "__main__":
+
+    makedirs("./raw-sheets-dump", exist_ok=True)
 
     console.clear()
 
