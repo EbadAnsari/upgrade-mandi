@@ -60,12 +60,14 @@ class Zepto_PDF:
         data: dict[str, dict],
         date: types.Date,
         invoiceVersion: int,
+        locationPo: dict[str, str] = {},
     ):
 
         self.domain = domain
         self.data = data
         self.date = date
         self.invoiceVersion = invoiceVersion
+        self.locatioPo = locationPo
 
         if sum(self.__columnWithPercentage) != 100:
             raise Exception("Sum of column percentage is not 100%")
@@ -118,7 +120,7 @@ class Zepto_PDF:
             ],
             [
                 Paragraph(
-                    "PO No. ",
+                    f'PO No. {self.locatioPo[location.name] if location.name in self.locatioPo else ""}',
                     self.__headingStyleLeft,
                 ),
                 "",
@@ -221,10 +223,10 @@ class Zepto_PDF:
         totalPdfCreationCount = []
         unCreatedPdfsCount = []
         for location in self.domain.locations:
-            activeDf = self.data[location.locationName]
+            activeDf = self.data[location.name]
 
             if activeDf.empty:
-                unCreatedPdfsCount.append(location.locationName)
+                unCreatedPdfsCount.append(location.name)
                 continue
 
             descriptionTable = self.__createDescriptionTable(location)
@@ -237,7 +239,7 @@ class Zepto_PDF:
             footer.setStyle(self.__tableStyle)
 
             pdf = SimpleDocTemplate(
-                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.locationName}.pdf",
+                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
@@ -248,7 +250,7 @@ class Zepto_PDF:
             # print(
             # f'PDF generated at "{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
             # )
-            totalPdfCreationCount.append(location.locationName)
+            totalPdfCreationCount.append(location.name)
         print(f"Total PDFs created: {len(totalPdfCreationCount)}")
         print(f"PDFs not created: {unCreatedPdfsCount}")
 

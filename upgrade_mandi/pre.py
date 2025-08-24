@@ -71,7 +71,7 @@ def loadDataSwiggy(file: str, domain: types.Swiggy, sheet: str):
 
     pdfDF["Location"] = pdfDF["Location"].apply(
         lambda x: utils.nameExtracter(
-            [location.locationName for location in domain.locations], x
+            [location.name for location in domain.locations], x
         )
     )
 
@@ -94,8 +94,7 @@ def loadDataZepto(file: str, sheet: str):
 
     # %%
     locations = [
-        location.locationName
-        for location in config.domainConfigClass["Zepto"].locations
+        location.name for location in config.domainConfigClass["Zepto"].locations
     ]
     # %%
     productDF = df[

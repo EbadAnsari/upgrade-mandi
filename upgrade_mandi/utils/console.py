@@ -3,22 +3,19 @@ from os.path import join
 from typing import List
 
 import inquirer
-from utils import config, utils
+
+from . import config, utils
 
 
-def selectBox(prompt: str, listOptions: List[str]):
+def selectBox(prompt: str, listOptions: List[str]) -> str:
     return inquirer.list_input(prompt, choices=listOptions)
 
 
-def __question(prompt: str):
+def prompt(prompt: str):
     return inquirer.text(prompt)
 
 
-def prompt(prompt: str):
-    return __question(prompt)
-
-
-def selectRawExcelFile():
+def selectRawExcelFile() -> str:
     fileNameList = utils.fileInRawSheet()
     if len(fileNameList) == 0:
         print("❌ No raw excel file found in 'raw-sheets-dump' folder.")
@@ -39,8 +36,16 @@ def selectDomain():
     )
 
 
+def yeNo(prompt: str):
+    response = selectBox(prompt, listOptions=["Yes", "No"])
+    if response == "Yes":
+        return True
+    else:
+        return False
+
+
 def readInvoiceVersion():
-    return __question("Enter invoice version")
+    return prompt("Enter invoice version")
 
 
 def clear():

@@ -11,7 +11,7 @@ def convert2TableFormat(
 ):
     if domain.domainName == "Swiggy":
         return {
-            location.locationName: df[df["Location"] == location.locationName][
+            location.name: df[df["Location"] == location.name][
                 selectedColumns
             ].reset_index(drop=True)
             for location in domain.locations

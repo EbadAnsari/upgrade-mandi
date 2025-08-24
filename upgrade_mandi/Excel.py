@@ -30,7 +30,7 @@ def toExcelSwiggy(
         join(baseFolerPath, f"{stringDate}.xlsx"), engine="xlsxwriter"
     ) as xlW:
         for location in domain.locations:
-            activeDF = df[location.locationName]
+            activeDF = df[location.name]
             if activeDF.empty:
                 # print(
                 #     f"No data found for the location: {location.locationName}.\nWhen creating excel file."
@@ -39,7 +39,7 @@ def toExcelSwiggy(
 
             activeDF["Sr"] = range(1, len(activeDF) + 1)
 
-            sheetName = f'{stringDate} {location.locationName}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
+            sheetName = f'{stringDate} {location.name}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
 
             activeDF.to_excel(
                 xlW,
@@ -80,7 +80,7 @@ def toExcelSwiggy(
 
             # Merge cells for header information
             workSheet.merge_range(0, 0, 0, 2, location.retailer, headerCellFormat)
-            workSheet.merge_range(1, 0, 1, 2, location.locationName, headerCellFormat)
+            workSheet.merge_range(1, 0, 1, 2, location.name, headerCellFormat)
             workSheet.merge_range(
                 2,
                 0,
@@ -139,6 +139,7 @@ def toExcelZepto(
     date: types.Date,
     baseFolderPathExcel: str,
     invoiceVersion: int = 1,
+    locationPo: dict[str, str] = {},
 ):
     stringDate = date.toString()
 
@@ -146,11 +147,11 @@ def toExcelZepto(
         join(baseFolderPathExcel, f"{stringDate}.xlsx"), engine="xlsxwriter"
     ) as xlW:
         for location in config.domainConfigClass["Zepto"].locations:
-            activeDF = df[location.locationName]
+            activeDF = df[location.name]
             if activeDF.empty:
                 continue
 
-            sheetName = f'{stringDate} {location.locationName}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
+            sheetName = f'{stringDate} {location.name}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
 
             activeDF.to_excel(
                 xlW,
@@ -273,7 +274,7 @@ def toExcelZepto(
                 0,
                 5,
                 6,
-                f"PO No: ",
+                f"PO No: {locationPo[location.name] if location.name in locationPo else ''}",
                 leftAlign,
             )
 

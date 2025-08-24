@@ -67,7 +67,7 @@ class PDF:
             ],
             [
                 Paragraph(
-                    location.locationName,
+                    location.name,
                     self.__headingStyle,
                 ),
                 Paragraph(
@@ -142,10 +142,10 @@ class PDF:
         totalPdfCreationCount = []
         unCreatedPdfsCount = []
         for location in self.domain.locations:
-            activeDf = self.data[location.locationName]
+            activeDf = self.data[location.name]
 
             if activeDf.empty:
-                unCreatedPdfsCount.append(location.locationName)
+                unCreatedPdfsCount.append(location.name)
                 continue
 
             descriptionTable = self.__createDescriptionTable(location)
@@ -155,7 +155,7 @@ class PDF:
             table.setStyle(self.__tableStyle)
 
             pdf = SimpleDocTemplate(
-                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.locationName}.pdf",
+                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
@@ -166,6 +166,6 @@ class PDF:
             # print(
             # f'PDF generated at "{folderPathForPdf}/{self.__dateToStr(self.date)} - {location.locationName}.pdf"'
             # )
-            totalPdfCreationCount.append(location.locationName)
+            totalPdfCreationCount.append(location.name)
         print(f"Total PDFs created: {len(totalPdfCreationCount)}")
         print(f"PDFs not created: {unCreatedPdfsCount}")

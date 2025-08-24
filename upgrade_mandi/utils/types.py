@@ -141,7 +141,7 @@ class VendorConfig:
 
 @dataclass
 class Location:
-    locationName: str
+    name: str
     shippingAddress: str
     retailer: str
     code: str

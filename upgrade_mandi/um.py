@@ -40,6 +40,7 @@ def execZepto(
     basePath: str,
     domain: types.DomainSelection,
     date: types.Date,
+    locationPo: dict[str, str] = {},
 ):
     folderPathForZeptoPdf = join(basePath, "Zepto", date.toString(), "pdfs")
     folderPathForZeptoExcel = join(basePath, "Zepto", date.toString(), "excels")
@@ -48,10 +49,12 @@ def execZepto(
 
     invoiceFormatedDF = loadDataZepto(file, sheetName)
 
-    pdf = Zepto_PDF(domain, invoiceFormatedDF, date, invoiceVersion)
+    pdf = Zepto_PDF(domain, invoiceFormatedDF, date, invoiceVersion, locationPo)
     pdf.buildPDF(folderPathForZeptoPdf)
 
-    toExcelZepto(invoiceFormatedDF, date, folderPathForZeptoExcel, invoiceVersion)
+    toExcelZepto(
+        invoiceFormatedDF, date, folderPathForZeptoExcel, invoiceVersion, locationPo
+    )
 
 
 def main(
@@ -60,6 +63,7 @@ def main(
     invoiceVersion: int,
     sheetName: str,
     date: Optional[types.Date],
+    locationPo: dict[str, str] = {},
 ):
     domain: types.DomainSelection = domainConfigClass[domainString.title()]
 
@@ -70,6 +74,6 @@ def main(
     if domainString == "Swiggy":
         execSwiggy(file, invoiceVersion, sheetName, basePath, domain)
     elif domainString == "Zepto":
-        execZepto(file, invoiceVersion, sheetName, basePath, domain, date)
+        execZepto(file, invoiceVersion, sheetName, basePath, domain, date, locationPo)
     else:
         raise ValueError(f"Invalid domain {domainString}")
