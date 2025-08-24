@@ -85,65 +85,77 @@ def loadDataZepto(file: str, sheet: str):
         file,
         sheet_name=sheet,
     )
-    df.columns = df.columns.str.strip()
-    if not any([column.startswith("NAG-") for column in df.columns]):
+    # %%
+    df.columns = df.columns.str.lower().str.strip()
+    if not any([column.startswith("nag-") for column in df.columns]):
         print("❌ The specified columns does not exist in the file.")
         print("Try to change the domain.")
         exit(0)
 
+    # %%
     locations = [
         location.locationName
         for location in config.domainConfigClass["Zepto"].locations
     ]
-
+    # %%
     productDF = df[
-        df.columns[[not column.startswith("NAG-") for column in df.columns]]
-    ].drop(labels=["Product Code", "Grand Total", "Vendor Name"], axis=1)
+        df.columns[[not column.startswith("nag-") for column in df.columns]]
+    ].drop(labels=["product code", "grand total", "vendor name"], axis=1)
 
-    productDF["UoM"] = productDF["UoM"].apply(
+    productDF["uom"] = productDF["uom"].apply(
         lambda uom: "#N/A" if str(uom) == "nan" else uom
     )
 
-    locationDF = df[df.columns[[column.startswith("NAG-") for column in df.columns]]]
+    productDF["rate"] = productDF["rate"].fillna(0)
+
+    locationDF = df[df.columns[[column.startswith("nag-") for column in df.columns]]]
     locationDF.columns = [
         utils.nameExtracter(locations, column[4:]) for column in locationDF.columns
     ]
 
+    # locationDF.columns = [ for location in locationDF.columns]
+    # %%
     locationSepratedDF: dict[str, pd.DataFrame] = {}
     for location in locations:
         locationSeries = locationDF[location]
-        locationSeries.name = "Invoice Qty."
+        locationSeries.name = "invoice qty."
         locationSepratedDF[location] = pd.concat([productDF, locationSeries], axis=1)
 
-        locationSepratedDF[location]["Amount"] = (
-            locationSepratedDF[location]["Rate"]
-            * locationSepratedDF[location]["Invoice Qty."]
+        locationSepratedDF[location]["amount"] = (
+            locationSepratedDF[location]["rate"]
+            * locationSepratedDF[location]["invoice qty."]
         )
 
         locationSepratedDF[location].columns = [
-            "Article Name",
-            "UoM",
-            "Rate",
-            "Invoice Qty.",
-            "Amount",
+            "article name",
+            "uom",
+            "rate",
+            "invoice qty.",
+            "amount",
         ]
 
-        locationSepratedDF[location]["Recieved Qty."] = ""
-        locationSepratedDF[location]["No"] = range(
+        locationSepratedDF[location]["recieved qty."] = ""
+        locationSepratedDF[location]["no"] = range(
             1, len(locationSepratedDF[location]) + 1
         )
 
         locationSepratedDF[location] = locationSepratedDF[location][
             [
-                "No",
-                "Article Name",
-                "UoM",
-                "Invoice Qty.",
-                "Recieved Qty.",
-                "Rate",
-                "Amount",
+                "no",
+                "article name",
+                "uom",
+                "invoice qty.",
+                "recieved qty.",
+                "rate",
+                "amount",
             ]
         ]
+
+        locationSepratedDF[location].columns = locationSepratedDF[
+            location
+        ].columns.str.title()
+
+    # %%
     return locationSepratedDF
 
 
