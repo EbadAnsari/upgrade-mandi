@@ -2,6 +2,7 @@ from os import makedirs
 from os.path import join
 from typing import Optional
 
+import pandas as pd
 from Excel import toExcelSwiggy, toExcelZepto
 from PDF import PDF
 from pre import loadDataSwiggy, loadDataZepto
@@ -64,6 +65,7 @@ def main(
     sheetName: str,
     date: Optional[types.Date],
     locationPo: dict[str, str] = {},
+    df: pd.DataFrame = pd.DataFrame(),
 ):
     domain: types.DomainSelection = domainConfigClass[domainString.title()]
 

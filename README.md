@@ -35,3 +35,8 @@ GRN_IM#11082025UMAN1#74227878
 | Manish Nagar  | (MNS) |
 | Nandanvan     | (NDV) |
 | Sai Mandi     | (SIM) |
+
+TODO:
+
+-   optimize the dataset so that it can read multiple rows of records
+-   embeded `rich` text

@@ -75,6 +75,8 @@ def loadDataSwiggy(file: str, domain: types.Swiggy, sheet: str):
         )
     )
 
+    pdfDF["Total Amount"] = pdfDF["Total Amount"].round(3)
+
     # The table does contain "Sr", "Recieved Qty", "Total Amount" column(s).
     return (pdfDF, pdfColumns, date)
 
@@ -149,6 +151,10 @@ def loadDataZepto(file: str, sheet: str):
                 "amount",
             ]
         ]
+
+        locationSepratedDF[location]["amount"] = locationSepratedDF[location][
+            "amount"
+        ].round(3)
 
         locationSepratedDF[location].columns = locationSepratedDF[
             location
