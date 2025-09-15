@@ -39,4 +39,6 @@ GRN_IM#11082025UMAN1#74227878
 TODO:
 
 -   optimize the dataset so that it can read multiple rows of records
+-   error handle for while entering the wrong file
 -   embeded `rich` text
+-   preprocess data before loading the dataset
