@@ -59,14 +59,12 @@ class Zepto_PDF:
         domain: types.DomainSelection,
         data: dict[str, dict],
         date: types.Date,
-        invoiceVersion: int,
         locationPo: dict[str, str] = {},
     ):
 
         self.domain = domain
         self.data = data
         self.date = date
-        self.invoiceVersion = invoiceVersion
         self.locatioPo = locationPo
 
         if sum(self.__columnWithPercentage) != 100:
@@ -110,7 +108,7 @@ class Zepto_PDF:
             ],
             [
                 Paragraph(
-                    f"Invoice No: {location.invoiceNo(self.date, self.domain.vendor.code)}",
+                    f"Invoice No: {location.invoiceNo(self.date, self.domain.vendor.code, self.domain.invoiceVersion)}",
                     self.__headingStyleLeft,
                 ),
                 Paragraph(

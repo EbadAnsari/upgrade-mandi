@@ -239,7 +239,7 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
             code="UM",
             email="ankushmisal7387@gmail.com",
             dispatchedAddress="Plot no 147 Bajrang Nagar, Manewada, Nagpur-440027",
-            mobile=Mobile("+91", "7385994320"),
+            mobile=Mobile(countryCode="+91", number="7385994320"),
             supplierId=None,
         ),
         columns=[

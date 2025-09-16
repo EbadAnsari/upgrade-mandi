@@ -1,7 +1,7 @@
 import numpy as __np
 import pandas as __pd
 
-from . import __dll
+from . import dll as __dll
 
 
 def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
@@ -32,7 +32,17 @@ def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
         __np.array(flat_list, dtype=object).reshape(table.rows, table.cols)
     )
 
+    df.columns = df.iloc[0]
+    df = df.drop(0, axis=0).reset_index(drop=True)
+
+    def filter(row: __pd.Series) -> bool:
+        percentage_of_valid = 0
+        for cell in row:
+            if cell.strip() != "":
+                percentage_of_valid += 1
+        return percentage_of_valid / len(row) >= 0.7
+
     # Free memory allocated in Rust
     __dll.free_table(table_ptr)
 
-    return df
+    return df[df.apply(filter, axis=1)].reset_index(drop=True)

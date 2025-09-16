@@ -1,10 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional, Union
 
+from pydantic import BaseModel, Field
 
-class Date:
-    date: int
-    month: int
+
+class Date(BaseModel):
+    date: int = Field(gt=0, lt=32)
+    month: int = Field(gt=0, lt=13)
     year: int
 
     def __init__(cls, dateString: str):
@@ -12,30 +14,29 @@ class Date:
         if len(split) != 3:
             raise ValueError(f"Invalid date string: {dateString}")
 
-        cls.date, cls.month, cls.year = (num.strip() for num in split)
+        date, month, year = map(int, [num.strip() for num in split])
+
+        super().__init__(date=date, month=month, year=year)
 
     def toString(
         self,
         sep="-",
         order: Union[Literal["DMY"], Literal["MDY"], Literal["YMD"]] = "DMY",
     ):
-        if len(self.date) == 1:
-            self.date = f"0{self.date}"
-        if len(self.month) == 1:
-            self.month = f"0{self.month}"
+        date = f"{'0' if self.date < 10 else ''}{self.date}"
+        month = f"{'0' if self.month < 10 else ''}{self.month}"
 
         if order == "DMY":
-            return f"{self.date}{sep}{self.month}{sep}{self.year}"
+            return f"{date}{sep}{month}{sep}{self.year}"
         elif order == "MDY":
-            return f"{self.month}{sep}{self.date}{sep}{self.year}"
+            return f"{month}{sep}{date}{sep}{self.year}"
         elif order == "YMD":
-            return f"{self.year}{sep}{self.month}{sep}{self.date}"
+            return f"{self.year}{sep}{month}{sep}{date}"
         else:
             raise ValueError(f"Invalid order: {order}")
 
 
-@dataclass
-class ColumnDefaultConfig:
+class ColumnDefaultConfig(BaseModel):
     """
     Default configuration for columns.
     This class is used to define the default settings for columns in the domain configuration.
@@ -45,8 +46,7 @@ class ColumnDefaultConfig:
     columnName: str = None
 
 
-@dataclass
-class Mobile:
+class Mobile(BaseModel):
     countryCode: str
     number: str
 
@@ -84,24 +84,20 @@ class Mobile:
         return self.format_plain()
 
 
-@dataclass
-class RawSheetConfig(ColumnDefaultConfig):
+class RawSheetConfig(ColumnDefaultConfig, BaseModel):
     pass
 
 
-@dataclass
-class InvoicePdfConfig(ColumnDefaultConfig):
+class InvoicePdfConfig(ColumnDefaultConfig, BaseModel):
     index: Optional[int] = None
     heading: Optional[bool] = None
 
 
-@dataclass
-class DatabaseConfig(ColumnDefaultConfig):
+class DatabaseConfig(ColumnDefaultConfig, BaseModel):
     columnName: Optional[str]
 
 
-@dataclass
-class ColumnConfig(ColumnDefaultConfig):
+class ColumnConfig(ColumnDefaultConfig, BaseModel):
     invoicePdf: Optional[InvoicePdfConfig] = None
     rawSheet: Optional[RawSheetConfig] = None
     database: Optional[DatabaseConfig] = None
@@ -115,8 +111,7 @@ class ColumnConfig(ColumnDefaultConfig):
 # Nagpur 440033
 
 
-@dataclass
-class Address:
+class Address(BaseModel):
     street: str
     # area: str
     city: str
@@ -129,8 +124,7 @@ class Address:
         return f"{self.street}, {self.area}, {self.city}, {self.state}, {self.postal_code}, {self.country}"
 
 
-@dataclass
-class VendorConfig:
+class VendorConfig(BaseModel):
     name: Union[Literal["Upgrade Mandi"]]
     code: str
     email: str
@@ -139,38 +133,34 @@ class VendorConfig:
     supplierId: Optional[str] = None
 
 
-@dataclass
-class Location:
+class Location(BaseModel):
     name: str
     shippingAddress: str
     retailer: str
     code: str
     storeId: Optional[str] = None
-    invoiceVersion: int = 1
 
     def poNo(self, date: Date, supplierId: str) -> str:
         return f'{date.toString(sep="", order="YMD")}-{self.storeId}-{supplierId}'
 
-    def invoiceNo(self, date: Date, vendorCode: str) -> str:
-        return f'{date.toString(sep="")}{vendorCode}{self.code}{self.invoiceVersion}'
+    def invoiceNo(self, date: Date, vendorCode: str, invoiceVersion: int) -> str:
+        return f'{date.toString(sep="")}{vendorCode}{self.code}{invoiceVersion}'
 
 
-@dataclass
 class CommonDomainConfig:
     vendor: VendorConfig
     columns: List[ColumnConfig] = field(default_factory=list)
     locations: List[Location] = field(default_factory=list)
     domainName: Union[Literal["Swiggy"], Literal["Zepto"]] = None
+    invoiceVersion: int = 1
 
 
-@dataclass
-class Swiggy(CommonDomainConfig):
+class Swiggy(CommonDomainConfig, BaseModel):
     # supplierId: Literal["74227878"]
     pass
 
 
-@dataclass
-class Zepto(CommonDomainConfig):
+class Zepto(CommonDomainConfig, BaseModel):
     pass
 
 

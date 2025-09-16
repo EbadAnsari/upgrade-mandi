@@ -56,7 +56,9 @@ def loadDataSwiggy(file: str, domain: types.Swiggy, sheet: str):
 
     pdfDF = df.copy()
     date = types.Date(
-        datetime.strptime(str(df["Date"][0]), "%Y-%m-%d 00:00:00").strftime("%d-%m-%Y")
+        dateString=datetime.strptime(str(df["Date"][0]), "%Y-%m-%d 00:00:00").strftime(
+            "%d-%m-%Y"
+        )
     )
 
     for column in extraColumns:

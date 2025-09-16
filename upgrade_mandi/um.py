@@ -25,13 +25,13 @@ def execSwiggy(
     makedirs(folderPathForSwiggyPdf, exist_ok=True)
     makedirs(folderPathForSwiggyExcel, exist_ok=True)
 
+    domain.invoiceVersion = invoiceVersion
+
     invoiceFormatedDF = convert2TableFormat(rawDF, domain, pdfColumns)
-    pdf = PDF(domain, invoiceFormatedDF, date, invoiceVersion)
+    pdf = PDF(domain, invoiceFormatedDF, date)
     pdf.buildPDF(folderPathForSwiggyPdf)
 
-    toExcelSwiggy(
-        invoiceFormatedDF, domain, date, folderPathForSwiggyExcel, invoiceVersion
-    )
+    toExcelSwiggy(invoiceFormatedDF, domain, date, folderPathForSwiggyExcel)
 
 
 def execZepto(
@@ -50,11 +50,17 @@ def execZepto(
 
     invoiceFormatedDF = loadDataZepto(file, sheetName)
 
-    pdf = Zepto_PDF(domain, invoiceFormatedDF, date, invoiceVersion, locationPo)
+    domain.invoiceVersion = invoiceVersion
+
+    pdf = Zepto_PDF(domain, invoiceFormatedDF, date, locationPo)
     pdf.buildPDF(folderPathForZeptoPdf)
 
     toExcelZepto(
-        invoiceFormatedDF, date, folderPathForZeptoExcel, invoiceVersion, locationPo
+        invoiceFormatedDF,
+        domain,
+        date,
+        folderPathForZeptoExcel,
+        locationPo,
     )
 
 

@@ -1,7 +1,7 @@
 from os.path import join
 
 import pandas as pd
-from utils import config, types
+from utils import types
 
 
 class Excel:
@@ -23,7 +23,6 @@ def toExcelSwiggy(
     domain: types.DomainSelection,
     date: types.Date,
     baseFolerPath: str,
-    invoiceVersion: int = 1,
 ):
     stringDate = date.toString()
     with pd.ExcelWriter(
@@ -39,7 +38,7 @@ def toExcelSwiggy(
 
             activeDF["Sr"] = range(1, len(activeDF) + 1)
 
-            sheetName = f'{stringDate} {location.name}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
+            sheetName = f'{stringDate} {location.name}{" " + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ""}'
 
             activeDF.to_excel(
                 xlW,
@@ -99,7 +98,7 @@ def toExcelSwiggy(
                 3,
                 2,
                 7,
-                f"Invoice: {location.invoiceNo(date, domain.vendor.code)}",
+                f"Invoice: {location.invoiceNo(date, domain.vendor.code, domain.invoiceVersion)}",
                 headerCellFormat,
             )
             workSheet.merge_range(
@@ -136,9 +135,9 @@ def toExcelSwiggy(
 
 def toExcelZepto(
     df: pd.DataFrame,
+    domain: types.DomainSelection,
     date: types.Date,
     baseFolderPathExcel: str,
-    invoiceVersion: int = 1,
     locationPo: dict[str, str] = {},
 ):
     stringDate = date.toString()
@@ -146,12 +145,12 @@ def toExcelZepto(
     with pd.ExcelWriter(
         join(baseFolderPathExcel, f"{stringDate}.xlsx"), engine="xlsxwriter"
     ) as xlW:
-        for location in config.domainConfigClass["Zepto"].locations:
+        for location in domain.locations:
             activeDF = df[location.name]
             if activeDF.empty:
                 continue
 
-            sheetName = f'{stringDate} {location.name}{" " + invoiceVersion if invoiceVersion > 1 else ""}'
+            sheetName = f'{stringDate} {location.name}{" " + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ""}'
 
             activeDF.to_excel(
                 xlW,
@@ -211,16 +210,14 @@ def toExcelZepto(
 
             center = workBook.add_format({"align": "center"})
 
-            workSheet.merge_range(
-                0, 0, 0, 6, config.domainConfigClass["Zepto"].vendor.name, title
-            )
+            workSheet.merge_range(0, 0, 0, 6, domain.vendor.name, title)
 
             workSheet.merge_range(
                 1,
                 0,
                 1,
                 6,
-                config.domainConfigClass["Zepto"].vendor.dispatchedAddress,
+                domain.vendor.dispatchedAddress,
                 headerCellFormat,
             )
 
@@ -229,7 +226,7 @@ def toExcelZepto(
                 0,
                 2,
                 2,
-                f'Email: {config.domainConfigClass["Zepto"].vendor.email}',
+                f"Email: {domain.vendor.email}",
                 leftAlign,
             )
 
@@ -238,7 +235,7 @@ def toExcelZepto(
                 3,
                 2,
                 6,
-                f'Mob: {config.domainConfigClass["Zepto"].vendor.mobile.e164}',
+                f"Mob: {domain.vendor.mobile.e164}",
                 rightAlign,
             )
 
@@ -256,7 +253,7 @@ def toExcelZepto(
                 0,
                 4,
                 2,
-                f'Invoice No: {location.invoiceNo(date, config.domainConfigClass["Zepto"].vendor.code)}',
+                f"Invoice No: {location.invoiceNo(date, domain.vendor.code, domain.invoiceVersion)}",
                 leftAlign,
             )
 

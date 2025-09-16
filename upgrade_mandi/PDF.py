@@ -40,13 +40,11 @@ class PDF:
         domain: types.DomainSelection,
         data: dict[str, dict],
         date: types.Date,
-        invoiceVersion: int,
     ):
 
         self.domain = domain
         self.data = data
         self.date = date
-        self.invoiceVersion = invoiceVersion
 
     def __createDescriptionTable(
         self,
@@ -81,7 +79,7 @@ class PDF:
                     self.__headingStyle,
                 ),
                 Paragraph(
-                    f"Invoice: {location.invoiceNo(self.date, self.domain.vendor.code)}",
+                    f"Invoice: {location.invoiceNo(self.date, self.domain.vendor.code, self.domain.invoiceVersion)}",
                     self.__headingStyle,
                 ),
             ],

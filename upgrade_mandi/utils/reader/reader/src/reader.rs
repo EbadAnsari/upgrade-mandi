@@ -1,11 +1,19 @@
-use calamine::{DataType, Xlsx, XlsxError, open_workbook};
+use calamine::{open_workbook, DataType, Xlsx, XlsxError};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 use std::ptr;
 
+/**
+ * data: Pointer to an array of C strings (char**)
+ * rows: Number of rows in the table
+ * cols: Number of columns in the table
+ *
+ * functionality: This struct holds single dimension array to hold the data of the excel matrix data
+ * and the number of rows and columns in the table.
+ */
 #[repr(C)]
 pub struct Table {
-    data: *mut *mut c_char, // pointer to flat C strings
+    data: *mut *mut c_char,
     rows: usize,
     cols: usize,
 }
@@ -23,6 +31,7 @@ pub extern "C" fn read_excel(file_name: *const c_char, sheet_name: *const c_char
         Ok(s) => s.to_string(),
         Err(_) => return ptr::null_mut(),
     };
+
     let sheet_name_str = match c_sheet.to_str() {
         Ok(s) => s.to_string(),
         Err(_) => return ptr::null_mut(),
