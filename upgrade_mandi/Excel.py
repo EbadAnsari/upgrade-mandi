@@ -1,15 +1,18 @@
 from os.path import join
 
 import pandas as pd
-from utils import types
+from utils.types import address, date
+from utils.types import domain as d
+
+# import utils.types as types
 
 
 class Excel:
     def __init__(
         self,
         df: pd.DataFrame,
-        domain: types.DomainSelection,
-        date: types.Date,
+        domain: d.DomainSelection,
+        date: date.Date,
         invoiceVersion: int = 1,
     ):
         self.df = df
@@ -20,8 +23,8 @@ class Excel:
 
 def toExcelSwiggy(
     df: pd.DataFrame,
-    domain: types.DomainSelection,
-    date: types.Date,
+    domain: d.DomainSelection,
+    date: date.Date,
     baseFolerPath: str,
 ):
     stringDate = date.toString()
@@ -135,8 +138,8 @@ def toExcelSwiggy(
 
 def toExcelZepto(
     df: pd.DataFrame,
-    domain: types.DomainSelection,
-    date: types.Date,
+    domain: d.DomainSelection,
+    date: date.Date,
     baseFolderPathExcel: str,
     locationPo: dict[str, str] = {},
 ):

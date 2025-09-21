@@ -7,7 +7,9 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
-from utils import types
+from utils.types import date
+from utils.types import domain as d
+from utils.types import location
 
 
 class PDF:
@@ -37,9 +39,9 @@ class PDF:
 
     def __init__(
         self,
-        domain: types.DomainSelection,
+        domain: d.DomainSelection,
         data: dict[str, dict],
-        date: types.Date,
+        date: date.Date,
     ):
 
         self.domain = domain
@@ -48,7 +50,7 @@ class PDF:
 
     def __createDescriptionTable(
         self,
-        location: types.Location,
+        location: location.Location,
     ) -> Table:
         vendorName = "Upgrade Mandi"
 

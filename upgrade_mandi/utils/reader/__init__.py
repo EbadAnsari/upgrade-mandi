@@ -1,13 +1,13 @@
 import ctypes
-from os.path import join
-from pathlib import Path
+from os.path import join as __join
+from pathlib import Path as __Path
 
 # Get the current file path for the DLL location
 # because the working directory may vary
-path = Path(__file__)
+path = __Path(__file__)
 
 # Load the DLL
-dll = ctypes.CDLL(join(path.parent, "reader.dll"))
+dll = ctypes.CDLL(__join(path.parent, "reader.dll"))
 
 
 # Define Table struct matching Rust

@@ -42,3 +42,5 @@ TODO:
 -   error handle for while entering the wrong file
 -   embeded `rich` text
 -   preprocess data before loading the dataset
+
+New-Item -ItemType SymbolicLink -Path "data" -Target "..\upgrade_mandi\data\"

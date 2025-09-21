@@ -4,14 +4,15 @@ from glob import glob
 from os.path import getmtime, join
 from typing import List
 
-from . import config, types
+from . import config
+from .types import date
 
 
-def generateInvoiceId(date: types.Date, code: str, invoiceVersion: int):
+def generateInvoiceId(date: date.Date, code: str, invoiceVersion: int):
     return f'{date.toString(sep="")}U{code}{invoiceVersion}'
 
 
-def generatePONo(date: types.Date, storeId: str, supplierId: str):
+def generatePONo(date: date.Date, storeId: str, supplierId: str):
     return f'{date.toString(sep="", order="YMD")}-{storeId}-{supplierId}'
 
 

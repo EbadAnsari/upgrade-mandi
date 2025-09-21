@@ -1,8 +1,9 @@
 from os import makedirs
 
-import pandas as pd
 from um import main
-from utils import config, console, types
+from utils import config, console
+from utils.read import getSheetNames
+from utils.types import date
 
 if __name__ == "__main__":
 
@@ -12,17 +13,17 @@ if __name__ == "__main__":
 
     file = console.selectRawExcelFile()
 
-    sheetNames = pd.ExcelFile(file).sheet_names
+    sheetNames = getSheetNames(file)
     if len(sheetNames) > 1:
         sheetName = console.selectBox("Select a sheet", sheetNames)
     else:
         sheetName = sheetNames[0]
     domain = console.selectDomain()
 
-    date = None
+    _date = None
     locationPo: dict[str, str] = {}
     if domain == "Zepto":
-        date = types.Date(
+        _date = date.Date(
             console.prompt("Enter the date in DD-MM-YYYY format: ").strip()
         )
         haveInvoice = console.yeNo("Have PO no")
@@ -33,4 +34,4 @@ if __name__ == "__main__":
             }
 
     invoiceVersion = int(console.readInvoiceVersion())
-    main(file, domain, invoiceVersion, sheetName, date, locationPo)
+    main(file, domain, invoiceVersion, sheetName, _date, locationPo)

@@ -1,12 +1,12 @@
 from typing import List
 
 import pandas as pd
-from utils import types
+from utils.types import domain as d
 
 
 def convert2TableFormat(
     df: pd.DataFrame,
-    domain: types.Swiggy,
+    domain: d.Swiggy,
     selectedColumns: List[str],
 ):
     if domain.domainName == "Swiggy":

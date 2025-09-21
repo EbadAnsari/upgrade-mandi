@@ -1,13 +1,17 @@
 from datetime import datetime
+from typing import Tuple
 
 import pandas as pd
 import typer
-from utils import config, types, utils
+from utils import config, utils
+from utils.read import readExcel
+from utils.types import date
+from utils.types import domain as d
 
 
-def loadDataSwiggy(file: str, domain: types.Swiggy, sheet: str):
+def loadDataSwiggy(file: str, sheet_name: str, domain: d.Swiggy):
     print(f"Reading file: {file}")
-    df = pd.read_excel(file, sheet_name=sheet)
+    df = readExcel(file, sheetName=sheet_name)
 
     try:
         df = df.dropna(how="all")[
@@ -48,88 +52,117 @@ def loadDataSwiggy(file: str, domain: types.Swiggy, sheet: str):
         )
     )
 
-    extraColumns = [
+    extra_columns = [
         column.invoicePdf.columnName
         for column in domain.columns
         if column.rawSheet is None and column.invoicePdf is not None
     ]
 
-    pdfDF = df.copy()
-    date = types.Date(
-        dateString=datetime.strptime(str(df["Date"][0]), "%Y-%m-%d 00:00:00").strftime(
+    pdf_df = df.copy()
+    _date = date.Date(
+        dateString=datetime.strptime(str(df["Date"][0]), "%Y-%m-%d").strftime(
             "%d-%m-%Y"
         )
     )
 
-    for column in extraColumns:
-        pdfDF[column] = ""
+    for column in extra_columns:
+        pdf_df[column] = ""
 
-    pdfDF["Article Code"] = pdfDF["Article Code"].astype(int)
+    pdf_df["Article Code"] = pdf_df["Article Code"].astype(int)
 
-    pdfDF["Dispatched Qty"] = pdfDF["Dispatched Qty"].astype(int)
-    pdfDF["Rate"] = pdfDF["Rate"].astype(int)
+    pdf_df["Dispatched Qty"] = pdf_df["Dispatched Qty"].astype(int)
+    pdf_df["Rate"] = pdf_df["Rate"].astype(int)
 
-    pdfDF["Total Amount"] = pdfDF["Dispatched Qty"] * pdfDF["Rate"]
+    pdf_df["Total Amount"] = pdf_df["Dispatched Qty"] * pdf_df["Rate"]
 
-    pdfDF["Location"] = pdfDF["Location"].apply(
+    pdf_df["Location"] = pdf_df["Location"].apply(
         lambda x: utils.nameExtracter(
             [location.name for location in domain.locations], x
         )
     )
 
-    pdfDF["Total Amount"] = pdfDF["Total Amount"].round(3)
+    pdf_df["Total Amount"] = pdf_df["Total Amount"].round(3)
 
     # The table does contain "Sr", "Recieved Qty", "Total Amount" column(s).
-    return (pdfDF, pdfColumns, date)
+    return (pdf_df, pdfColumns, _date)
 
 
-def loadDataZepto(file: str, sheet: str):
-    print(f"Reading file: {file}")
-    df = pd.read_excel(
-        file,
-        sheet_name=sheet,
+def pre_processing_zepto(
+    file_name: str, sheet_name: str, domain: d.DomainSelection
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    df = readExcel(
+        file_name,
+        sheetName=sheet_name,
     )
     # %%
+    # al the columns are converted to lower case and stripped of leading/trailing spaces.
     df.columns = df.columns.str.lower().str.strip()
+
+    zepto_nag_prefix_column_name = df.columns[
+        [column.startswith("nag-") for column in df.columns]
+    ]
+    zepto_locations_name = [location.name for location in domain.locations]
+
+    df["rate"] = df["rate"].astype(float)
+    df["rate"] = df["rate"].fillna(0)
+
+    df["grand total"] = df["grand total"].astype(float)
+    df["grand total"] = df["grand total"].fillna(0)
+
+    df[zepto_nag_prefix_column_name] = df[zepto_nag_prefix_column_name].fillna(0)
+    df[zepto_nag_prefix_column_name] = df[zepto_nag_prefix_column_name].astype(float)
+
+    df["uom"] = df["uom"].apply(lambda uom: "#N/A" if str(uom) == "nan" else uom)
+
     if not any([column.startswith("nag-") for column in df.columns]):
         print("❌ The specified columns does not exist in the file.")
         print("Try to change the domain.")
         exit(0)
 
-    # %%
-    locations = [
-        location.name for location in config.domainConfigClass["Zepto"].locations
+    # the "nag-" prefix is removed from the location columns and the actual location name is extracted using the utils.nameExtracter function.
+    df.columns = [
+        (
+            utils.nameExtracter(zepto_locations_name, column[4:])
+            if column.startswith("nag-")
+            else column
+        )
+        for column in df.columns
     ]
-    # %%
-    productDF = df[
-        df.columns[[not column.startswith("nag-") for column in df.columns]]
-    ].drop(labels=["product code", "grand total", "vendor name"], axis=1)
 
-    productDF["uom"] = productDF["uom"].apply(
-        lambda uom: "#N/A" if str(uom) == "nan" else uom
+    zepto_product_info_df = df[["product name", "uom", "rate"]]
+    zepto_nag_prefix_location_df = df[zepto_locations_name]
+
+    return (zepto_product_info_df, zepto_nag_prefix_location_df, zepto_locations_name)
+
+
+def loadDataZepto(
+    file: str, sheet: str, domain: d.DomainSelection
+) -> dict[str, pd.DataFrame]:
+    print(f"Reading file: {file}")
+
+    zepto_product_info_df, zepto_nag_prefix_location_df, zepto_locations_name = (
+        pre_processing_zepto(file, sheet, domain)
     )
 
-    productDF["rate"] = productDF["rate"].fillna(0)
-
-    locationDF = df[df.columns[[column.startswith("nag-") for column in df.columns]]]
-    locationDF.columns = [
-        utils.nameExtracter(locations, column[4:]) for column in locationDF.columns
-    ]
-
-    # locationDF.columns = [ for location in locationDF.columns]
     # %%
-    locationSepratedDF: dict[str, pd.DataFrame] = {}
-    for location in locations:
-        locationSeries = locationDF[location]
+    # varibale holds invoice data of each location in dictonary format.
+    # "Ayodhya Nagar": pd.DataFrame, "Besa": pd.DataFrame, ......
+    location_seprated_df: dict[str, pd.DataFrame] = {}
+    for location in zepto_locations_name:
+        locationSeries = zepto_nag_prefix_location_df[location]
         locationSeries.name = "invoice qty."
-        locationSepratedDF[location] = pd.concat([productDF, locationSeries], axis=1)
-
-        locationSepratedDF[location]["amount"] = (
-            locationSepratedDF[location]["rate"]
-            * locationSepratedDF[location]["invoice qty."]
+        location_seprated_df[location] = pd.concat(
+            [zepto_product_info_df, locationSeries], axis=1
         )
 
-        locationSepratedDF[location].columns = [
+        location_seprated_df[location]["rate"] = location_seprated_df[location]["rate"]
+
+        location_seprated_df[location]["amount"] = (
+            location_seprated_df[location]["rate"]
+            * location_seprated_df[location]["invoice qty."]
+        )
+
+        location_seprated_df[location].columns = [
             "article name",
             "uom",
             "rate",
@@ -137,12 +170,12 @@ def loadDataZepto(file: str, sheet: str):
             "amount",
         ]
 
-        locationSepratedDF[location]["recieved qty."] = ""
-        locationSepratedDF[location]["no"] = range(
-            1, len(locationSepratedDF[location]) + 1
+        location_seprated_df[location]["recieved qty."] = ""
+        location_seprated_df[location]["no"] = range(
+            1, len(location_seprated_df[location]) + 1
         )
 
-        locationSepratedDF[location] = locationSepratedDF[location][
+        location_seprated_df[location] = location_seprated_df[location][
             [
                 "no",
                 "article name",
@@ -154,16 +187,16 @@ def loadDataZepto(file: str, sheet: str):
             ]
         ]
 
-        locationSepratedDF[location]["amount"] = locationSepratedDF[location][
+        location_seprated_df[location]["amount"] = location_seprated_df[location][
             "amount"
         ].round(3)
 
-        locationSepratedDF[location].columns = locationSepratedDF[
+        location_seprated_df[location].columns = location_seprated_df[
             location
         ].columns.str.title()
 
     # %%
-    return locationSepratedDF
+    return location_seprated_df
 
 
 if __name__ == "__main__":
@@ -183,7 +216,7 @@ if __name__ == "__main__":
             help="Sheet name of the Excel file (default: 'Sheet1')",
         ),
     ):
-        data = loadDataSwiggy(file, sheetName, invoiceVersion)
+        data = loadDataSwiggy(file, sheetName, domain)
         print(data)
 
     typer.run(run)

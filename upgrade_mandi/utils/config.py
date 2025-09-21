@@ -9,17 +9,9 @@ from typing import Union
 
 from dotenv import load_dotenv
 
-from .types import (
-    ColumnConfig,
-    DatabaseConfig,
-    InvoicePdfConfig,
-    Location,
-    Mobile,
-    RawSheetConfig,
-    Swiggy,
-    VendorConfig,
-    Zepto,
-)
+from .types import column, database
+from .types import domain as d
+from .types import invoice, location, mobile, table, vendor
 
 load_dotenv()
 
@@ -78,152 +70,165 @@ VIZ_CONFIG = {
 }
 
 
-domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
-    "Swiggy": Swiggy(
+domainConfigClass: dict[str, Union[d.Swiggy, d.Zepto]] = {
+    "Swiggy": d.Swiggy(
         domainName="Swiggy",
-        vendor=VendorConfig(
+        vendor=vendor.VendorConfig(
             name="Upgrade Mandi",
             code="U",
             email="ankushmisal7387@gmail.com",
-            mobile=Mobile(countryCode="+91", number="1234567890"),
+            mobile=mobile.Mobile(countryCode="+91", number="1234567890"),
             supplierId="74227878",
             dispatchedAddress=None,
         ),
         columns=[
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Article Code",
-                invoicePdf=InvoicePdfConfig(columnName="Article Code", index=1),
-                rawSheet=RawSheetConfig(columnName="ITEM_CODE"),
-                database=DatabaseConfig(columnName="Article Code"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Article Code", index=1),
+                rawSheet=table.RawSheetConfig(columnName="ITEM_CODE"),
+                database=database.DatabaseConfig(columnName="Article Code"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Date",
-                invoicePdf=InvoicePdfConfig(columnName="Date", heading=True),
-                rawSheet=RawSheetConfig(columnName="Date"),
-                database=DatabaseConfig(columnName="Date"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Date", heading=True),
+                rawSheet=table.RawSheetConfig(columnName="Date"),
+                database=database.DatabaseConfig(columnName="Date"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Dispatched Qty",
-                invoicePdf=InvoicePdfConfig(columnName="Dispatched Qty", index=4),
-                rawSheet=RawSheetConfig(columnName="Indents"),
-                database=DatabaseConfig(columnName="Dispatched Qty"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Dispatched Qty", index=4
+                ),
+                rawSheet=table.RawSheetConfig(columnName="Indents"),
+                database=database.DatabaseConfig(columnName="Dispatched Qty"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Item Description",
-                invoicePdf=InvoicePdfConfig(columnName="Item Description", index=2),
-                rawSheet=RawSheetConfig(columnName="PRODUCT_NAME"),
-                database=DatabaseConfig(columnName="Item Description"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Item Description", index=2
+                ),
+                rawSheet=table.RawSheetConfig(columnName="PRODUCT_NAME"),
+                database=database.DatabaseConfig(columnName="Item Description"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Invoice No",
-                invoicePdf=InvoicePdfConfig(columnName="Invoice No", heading=True),
-                database=DatabaseConfig(columnName="Invoice No"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Invoice No", heading=True
+                ),
+                database=database.DatabaseConfig(columnName="Invoice No"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Invoice Version",
-                database=DatabaseConfig(columnName="Invoice Version"),
+                database=database.DatabaseConfig(columnName="Invoice Version"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Location",
-                invoicePdf=InvoicePdfConfig(columnName="Location", heading=True),
-                rawSheet=RawSheetConfig(columnName="STORE_NAME"),
-                database=DatabaseConfig(columnName="Location"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Location", heading=True
+                ),
+                rawSheet=table.RawSheetConfig(columnName="STORE_NAME"),
+                database=database.DatabaseConfig(columnName="Location"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="PO No",
-                invoicePdf=InvoicePdfConfig(columnName="PO No", heading=True),
-                rawSheet=RawSheetConfig(columnName="PO Number"),
-                database=DatabaseConfig(columnName="PO No"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="PO No", heading=True),
+                rawSheet=table.RawSheetConfig(columnName="PO Number"),
+                database=database.DatabaseConfig(columnName="PO No"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Rate",
-                invoicePdf=InvoicePdfConfig(columnName="Rate", index=6),
-                rawSheet=RawSheetConfig(columnName="Cost"),
-                database=DatabaseConfig(columnName="Rate"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Rate", index=6),
+                rawSheet=table.RawSheetConfig(columnName="Cost"),
+                database=database.DatabaseConfig(columnName="Rate"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Recieved Qty",
-                invoicePdf=InvoicePdfConfig(columnName="Recieved Qty", index=5),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Recieved Qty", index=5),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Retailer",
-                invoicePdf=InvoicePdfConfig(columnName="Retailer", heading=True),
-                rawSheet=RawSheetConfig(columnName="Entity Name"),
-                database=DatabaseConfig(columnName="Retailer"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Retailer", heading=True
+                ),
+                rawSheet=table.RawSheetConfig(columnName="Entity Name"),
+                database=database.DatabaseConfig(columnName="Retailer"),
             ),
-            ColumnConfig(
-                columnName="Sr", invoicePdf=InvoicePdfConfig(columnName="Sr", index=0)
+            table.ColumnConfig(
+                columnName="Sr",
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Sr", index=0),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Total Amount",
-                invoicePdf=InvoicePdfConfig(columnName="Total Amount", index=7),
-                # rawSheet=RawSheetConfig(columnName="Total"),
-                database=DatabaseConfig(columnName="Total Amount"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Total Amount", index=7),
+                # rawSheet=table.RawSheetConfig(columnName="Total"),
+                database=database.DatabaseConfig(columnName="Total Amount"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="UoM",
-                invoicePdf=InvoicePdfConfig(columnName="UoM", index=3),
-                rawSheet=RawSheetConfig(columnName="WEIGHT"),
-                database=DatabaseConfig(columnName="UoM"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="UoM", index=3),
+                rawSheet=table.RawSheetConfig(columnName="WEIGHT"),
+                database=database.DatabaseConfig(columnName="UoM"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Vendor Name",
-                invoicePdf=InvoicePdfConfig(columnName="Vendor Name", heading=True),
-                rawSheet=RawSheetConfig(columnName="VENDOR"),
-                database=DatabaseConfig(columnName="Vendor Name"),
+                invoicePdf=invoice.InvoicePdfConfig(
+                    columnName="Vendor Name", heading=True
+                ),
+                rawSheet=table.RawSheetConfig(columnName="VENDOR"),
+                database=database.DatabaseConfig(columnName="Vendor Name"),
             ),
         ],
         locations=[
-            Location(
+            location.Location(
                 name="Amravati",
                 shippingAddress="Ground floor Nazul Plot No. 72 Nazul Sheet No. 46d Sabanis Plot Kawar Nagar To Rukhmini Nagar Road Amravati 444606",
                 retailer="Rajidi Retail Pvt Ltd",
                 code="AMD",
                 storeId="1402771",
             ),
-            Location(
+            location.Location(
                 name="Ayodhya Nagar",
                 shippingAddress="Gadewar Lawns Plot No.31, 32, 33, 36, 37 And 38, K. H. No, 72/2, Situated At Gadewar Lawn, Shri Ram Wadi",
                 retailer="Rajidi Retail Pvt Ltd",
                 code="AN",
                 storeId="1403419",
             ),
-            Location(
+            location.Location(
                 name="Byramji",
                 shippingAddress="Unit nos - 59 to 71 Lower Ground Floor Ginger Square City Survey No - 1049",
                 retailer="Rajidi Retail Pvt Ltd",
                 code="B",
                 storeId="1392084",
             ),
-            Location(
+            location.Location(
                 name="Dharampeth",
                 shippingAddress="Plot No. 151, CTS No. 135 Puja Sabhagrah, Ravi Nagar Square, Ram Nagar",
                 retailer="Swinsta Ent Private Limited",
                 code="DH",
                 storeId="1397624",
             ),
-            Location(
+            location.Location(
                 name="Mahal",
                 shippingAddress="Unit no - G-1, Plot no.58, sardar patel timber Dhantoli, NAGPUR - 440027",
                 retailer="Rajidi Retail Pvt Ltd",
                 code="MH",
                 storeId="1393571",
             ),
-            Location(
+            location.Location(
                 name="Manish Nagar",
                 shippingAddress='Ground floor "Jayanti Mansion III", Manish nagar Nagpur Maharashtra',
                 retailer="Rajidi Retail Pvt Ltd",
                 code="MN",
                 storeId="1392532",
             ),
-            Location(
+            location.Location(
                 name="Nandanvan",
                 shippingAddress="Vinayak Tower, Lower Ground Floor, Survey No.212 Gurudev Nagar Main Road, New Nanadanvan",
                 retailer="Swinsta Ent Private Limited",
                 code="NA",
                 storeId="1397035",
             ),
-            Location(
+            location.Location(
                 name="Sai Mandir",
                 shippingAddress="Khasra No 18/2, city Survey No.718, House No. 781/B, Situated at Village Ajni",
                 retailer="Swinsta Ent Private Limited",
@@ -232,96 +237,96 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
             ),
         ],
     ),
-    "Zepto": Zepto(
+    "Zepto": d.Zepto(
         domainName="Zepto",
-        vendor=VendorConfig(
+        vendor=vendor.VendorConfig(
             name="Upgrade Mandi",
             code="UM",
             email="ankushmisal7387@gmail.com",
             dispatchedAddress="Plot no 147 Bajrang Nagar, Manewada, Nagpur-440027",
-            mobile=Mobile(countryCode="+91", number="7385994320"),
+            mobile=mobile.Mobile(countryCode="+91", number="7385994320"),
             supplierId=None,
         ),
         columns=[
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Article Name",
-                invoicePdf=InvoicePdfConfig(columnName="Article Name", index=1),
-                rawSheet=RawSheetConfig(columnName="Product Name"),
-                database=DatabaseConfig(columnName="Article Name"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Article Name", index=1),
+                rawSheet=table.RawSheetConfig(columnName="Product Name"),
+                database=database.DatabaseConfig(columnName="Article Name"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Invoice Qty.",
-                invoicePdf=InvoicePdfConfig(columnName="Invoice Qty.", index=2),
-                database=DatabaseConfig(columnName="Invoice Qty."),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="Invoice Qty.", index=2),
+                database=database.DatabaseConfig(columnName="Invoice Qty."),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="No",
-                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="No", index=0),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Rate",
-                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="No", index=0),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Recieved Qty.",
-                invoicePdf=InvoicePdfConfig(columnName="No", index=0),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="No", index=0),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="UoM",
-                invoicePdf=InvoicePdfConfig(columnName="UoM", index=2),
-                rawSheet=RawSheetConfig(columnName="UoM"),
-                database=DatabaseConfig(columnName="UoM"),
+                invoicePdf=invoice.InvoicePdfConfig(columnName="UoM", index=2),
+                rawSheet=table.RawSheetConfig(columnName="UoM"),
+                database=database.DatabaseConfig(columnName="UoM"),
             ),
-            ColumnConfig(
+            table.ColumnConfig(
                 columnName="Vendor Name",
-                rawSheet=RawSheetConfig(columnName="Vendor Name"),
-                database=DatabaseConfig(columnName="Vendor Name"),
+                rawSheet=table.RawSheetConfig(columnName="Vendor Name"),
+                database=database.DatabaseConfig(columnName="Vendor Name"),
             ),
         ],
         locations=[
-            Location(
+            location.Location(
                 name="Besa",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Besa Kh. No. 82/3 Jayanti Nagari VII, Nagpur (Urban), Nagpur Nagpur 440037",
                 retailer="Dorgheria",
                 code="B",
             ),
-            Location(
+            location.Location(
                 name="Bhupesh Nagar",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Bhupesh Nagar 236/B/28 & 236/B/28/A, Gorewada Road, Yogendra Nagar, Near Blue Daimond School, Nagpur. Maharashtra Maharashtra Nagpur 440013",
                 retailer="Dorgheria",
                 code="BN",
             ),
-            Location(
+            location.Location(
                 name="Garoba Maidan",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Garoba Maidan, NIT Plot No. 1125 to 1135, 1191 to 1199, H. No. 1288/H/6, 1288/H/7, Near Jagnade Square, KDK College Road, Nandanwan, Nagpur 440009",
                 retailer="Dorgheria",
                 code="GM",
             ),
-            Location(
+            location.Location(
                 name="Gokulpeth",
                 shippingAddress="DROGHERIA SELLERS PVT LTD,DS-NAG-Gokulpeth 151 Agrawal building, Ravi nagarsquare ,Gokul peth ward, Nagpur 440033",
                 retailer="Dorgheria",
                 code="GM",
             ),
-            Location(
+            location.Location(
                 name="Jaripatka",
                 shippingAddress="Jaripatka, Nagpur 440030",
                 retailer="Dorgheria",
                 code="J",
             ),
-            Location(
+            location.Location(
                 name="Khamala",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Khamala Nagpur",
                 retailer="Dorgheria",
                 code="K",
             ),
-            Location(
+            location.Location(
                 name="Raghuji Nagar",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Raghuji Nagar Pragati Sabhgruh, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440024 Nagpur 440024",
                 retailer="Dorgheria",
                 code="R",
             ),
-            Location(
+            location.Location(
                 name="Zingabai Takali",
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Zingabai Takali Pandurang Mangal Karyalaya, 561/A, Grenada Bandhu Nagar, Zingabai Takali, Nagpur 440030",
                 retailer="Dorgheria",
@@ -368,12 +373,12 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
 #             "Invoice Version": {
 #                 "notion-column-name": "Invoice Version",
 #             },
-#             "Location": {
+#             "location.Location": {
 #                 "invoice-pdf": {
 #                     "heading": True,
 #                 },
 #                 "raw-sheet-name": {"name": "STORE_NAME"},
-#                 "notion-column-name": "Location",
+#                 "notion-column-name": "location.Location",
 #             },
 #             "PO No": {
 #                 "invoice-pdf": {
@@ -444,7 +449,7 @@ domainConfigClass: dict[str, Union[Swiggy, Zepto]] = {
 #             "Invoice No",
 #             "Invoice Version",
 #             "Item Description",
-#             "Location",
+#             "location.Location",
 #             "Rate",
 #             "Total Amount",
 #             "UoM",
