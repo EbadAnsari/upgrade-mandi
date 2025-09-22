@@ -132,6 +132,8 @@ def pre_processing_zepto(
     zepto_product_info_df = df[["product name", "uom", "rate"]]
     zepto_nag_prefix_location_df = df[zepto_locations_name]
 
+    zepto_nag_prefix_location_df = zepto_nag_prefix_location_df.astype(int)
+
     return (zepto_product_info_df, zepto_nag_prefix_location_df, zepto_locations_name)
 
 

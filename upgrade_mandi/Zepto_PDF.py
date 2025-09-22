@@ -167,7 +167,7 @@ class Zepto_PDF:
             "Total",
             "",
             "",
-            str(df["Invoice Qty."].apply(int).sum()),
+            str(df["Invoice Qty."].apply(float).sum()),
             "",
             "",
             str(df["Amount"].apply(int).sum()),
