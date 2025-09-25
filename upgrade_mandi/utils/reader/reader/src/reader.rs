@@ -1,19 +1,30 @@
-use calamine::{open_workbook, DataType, Xlsx, XlsxError};
+use calamine::{DataType, Xlsx, XlsxError, open_workbook};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 use std::ptr;
 
 /**
- * data: Pointer to an array of C strings (char**)
+ * value: Pointer to a C string
+ * kind: 0: Empty, 1: String, 2: Int, 3: Float, 4: Bool, 5: Date
+ *
+ * functionality: This struct holds the value of the cell and the type of the cell
+ */
+#[repr(C)]
+pub struct Cell {
+    value: *mut c_char,
+    kind: u8, // 0: Empty, 1: String, 2: Int, 3: Float, 4: Bool, 5: Date
+}
+
+/**
+ * data: Pointer to an array of C strings (* Cell)
  * rows: Number of rows in the table
  * cols: Number of columns in the table
- *
  * functionality: This struct holds single dimension array to hold the data of the excel matrix data
  * and the number of rows and columns in the table.
  */
 #[repr(C)]
 pub struct Table {
-    data: *mut *mut c_char,
+    data: *mut Cell,
     rows: usize,
     cols: usize,
 }
@@ -51,23 +62,43 @@ fn do_read_excel(file_name: String, sheet_name: String) -> Result<*mut Table, Xl
     let cols = range.width();
 
     // Flatten directly into a vector of C strings
-    let mut flat: Vec<*mut c_char> = Vec::with_capacity(rows * cols);
+    let mut flat: Vec<Cell> = Vec::with_capacity(rows * cols);
 
     for row in range.rows() {
-        let mut _row: Vec<*mut c_char> = Vec::new();
         for cell in row {
-            let mut c_str: CString = CString::new("").unwrap();
-            if cell.is_datetime() {
-                c_str = CString::new(cell.as_date().unwrap().to_string()).unwrap();
+            let value = if cell.is_datetime() {
+                match cell.as_date() {
+                    Some(s) => s.to_string(),
+                    _ => "".to_string(),
+                }
             } else {
-                c_str = match cell.as_string() {
-                    Some(s) => CString::new(s.to_string()).unwrap(),
-                    None => CString::new("").unwrap(),
-                };
-            }
-            _row.push(c_str.into_raw());
+                match cell.as_string() {
+                    Some(s) => s.to_string(),
+                    _ => "".to_string(),
+                }
+            };
+
+            let kind = if cell.is_empty() {
+                0
+            } else if cell.is_string() {
+                1
+            } else if cell.is_int() {
+                2
+            } else if cell.is_float() {
+                3
+            } else if cell.is_bool() {
+                4
+            } else if cell.is_datetime() {
+                5
+            } else {
+                0
+            };
+
+            flat.push(Cell {
+                value: CString::new(value).unwrap().into_raw(),
+                kind,
+            });
         }
-        flat.extend(_row);
     }
 
     let data_ptr = flat.as_mut_ptr();
@@ -93,10 +124,11 @@ pub extern "C" fn free_table(table_ptr: *mut Table) {
 
     // Free each C string
     for i in 0..total {
-        let cstr_ptr = unsafe { *table.data.offset(i) };
-        if !cstr_ptr.is_null() {
+        let cell = unsafe { (*table).data.offset(i) };
+        if unsafe { !(*cell).value.is_null() } {
             unsafe {
-                let _ = CString::from_raw(cstr_ptr);
+                let _ = CString::from_raw((*cell).value);
+                (*cell).value = std::ptr::null_mut();
             };
         }
     }

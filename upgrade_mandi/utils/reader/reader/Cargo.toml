@@ -8,6 +8,6 @@ calamine = { version = "0.24", features = ["dates"] }
 
 
 [lib]
-name = "reader"         # this will produce mydll.dll
+name = "reader"         # this will produce reader.dll
 crate-type = ["cdylib"]  # cdylib = C-compatible dynamic library
 path = "src/reader.rs"

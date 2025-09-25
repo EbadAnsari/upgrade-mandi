@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple
+from typing import Any, List, Tuple
 
 import pandas as pd
 import typer
@@ -9,7 +9,9 @@ from utils.types import date
 from utils.types import domain as d
 
 
-def loadDataSwiggy(file: str, sheet_name: str, domain: d.Swiggy):
+def loadDataSwiggy(
+    file: str, sheet_name: str, domain: d.Swiggy
+) -> tuple[pd.DataFrame, list[Any], date.Date]:
     print(f"Reading file: {file}")
     df = readExcel(file, sheetName=sheet_name)
 
@@ -32,7 +34,7 @@ def loadDataSwiggy(file: str, sheet_name: str, domain: d.Swiggy):
             raise
 
     df.columns = [
-        column.invoicePdf.columnName
+        column.invoicePdf.columnName  # type: ignore
         for column in domain.columns
         if column.rawSheet is not None
     ]
@@ -47,8 +49,8 @@ def loadDataSwiggy(file: str, sheet_name: str, domain: d.Swiggy):
                     if column.invoicePdf is not None
                     and column.invoicePdf.index is not None
                 ],
-                key=lambda x: x.index,
-            ),
+                key=lambda x: x.index,  # type: ignore
+            ),  # type: ignore
         )
     )
 
@@ -89,7 +91,7 @@ def loadDataSwiggy(file: str, sheet_name: str, domain: d.Swiggy):
 
 def pre_processing_zepto(
     file_name: str, sheet_name: str, domain: d.DomainSelection
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> Tuple[pd.DataFrame, pd.DataFrame, List[str]]:
     df = readExcel(
         file_name,
         sheetName=sheet_name,
@@ -218,7 +220,7 @@ if __name__ == "__main__":
             help="Sheet name of the Excel file (default: 'Sheet1')",
         ),
     ):
-        data = loadDataSwiggy(file, sheetName, domain)
+        data = loadDataSwiggy(file, sheetName, domain)  # type: ignore
         print(data)
 
     typer.run(run)

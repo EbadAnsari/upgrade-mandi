@@ -1,7 +1,10 @@
+from typing import Any
+
 import numpy as __np
 import pandas as __pd
 
 from . import dll as __dll
+from . import test
 
 
 def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
@@ -24,25 +27,36 @@ def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
 
     table = table_ptr.contents
 
-    # Convert flat C array to Python list
-    flat_list = [table.data[i].decode("utf-8") for i in range(table.rows * table.cols)]
+    # print(table.data[90].kind)
+    # print(table.data[90].value.decode("utf-8"))
+    # print()
+    # flat_list = []
+    df = __pd.DataFrame()
+    matrix = []
+    for row in range(table.rows):
+        _row = []
+        for col in range(table.cols):
+            cell = table.data[row * table.cols + col]
+            value = cell.value.decode("utf-8")
 
-    # Reshape into 2D NumPy array
-    df = __pd.DataFrame(
-        __np.array(flat_list, dtype=object).reshape(table.rows, table.cols)
-    )
-
-    df.columns = df.iloc[0]
-    df = df.drop(0, axis=0).reset_index(drop=True)
-
-    def filter(row: __pd.Series) -> bool:
-        percentage_of_valid = 0
-        for cell in row:
-            if cell.strip() != "":
-                percentage_of_valid += 1
-        return percentage_of_valid / len(row) >= 0.7
-
-    # Free memory allocated in Rust
+            if cell.kind == 0:
+                _row.append(__np.nan)
+            elif cell.kind in [1, 5]:
+                _row.append(str(value))
+            elif cell.kind == 2:
+                _row.append(int(value))
+            elif cell.kind == 3:
+                _row.append(float(value))
+            elif cell.kind == 4:
+                _row.append(value)
+        if row == 0:
+            for column_name in _row:
+                df[column_name] = []
+        else:
+            matrix.append(_row)
     __dll.free_table(table_ptr)
-
-    return df[df.apply(filter, axis=1)].reset_index(drop=True)
+    df = __pd.concat(
+        [df, __pd.DataFrame(matrix, columns=df.columns)], axis=0, ignore_index=True
+    )
+    df.dropna(axis=0, how="all", inplace=True)
+    return df

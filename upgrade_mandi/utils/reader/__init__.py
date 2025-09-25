@@ -6,14 +6,25 @@ from pathlib import Path as __Path
 # because the working directory may vary
 path = __Path(__file__)
 
+test = True
+whole_path = (
+    __join(path.parent, "reader", "dll", "release", "reader.dll")
+    if test
+    else __join(path.parent, "reader.dll")
+)
+
 # Load the DLL
-dll = ctypes.CDLL(__join(path.parent, "reader.dll"))
+dll = ctypes.CDLL(whole_path)
+
+
+class Cell(ctypes.Structure):
+    _fields_ = [("value", ctypes.c_char_p), ("kind", ctypes.c_int8)]
 
 
 # Define Table struct matching Rust
 class Table(ctypes.Structure):
     _fields_ = [
-        ("data", ctypes.POINTER(ctypes.c_char_p)),
+        ("data", ctypes.POINTER(Cell if test else ctypes.c_char_p)),
         ("rows", ctypes.c_size_t),
         ("cols", ctypes.c_size_t),
     ]
