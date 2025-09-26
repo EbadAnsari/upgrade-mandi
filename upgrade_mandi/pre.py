@@ -73,7 +73,7 @@ def loadDataSwiggy(
     pdf_df["Article Code"] = pdf_df["Article Code"].astype(int)
 
     pdf_df["Dispatched Qty"] = pdf_df["Dispatched Qty"].astype(int)
-    pdf_df["Rate"] = pdf_df["Rate"].astype(int)
+    pdf_df["Rate"] = pdf_df["Rate"].astype(float)
 
     pdf_df["Total Amount"] = pdf_df["Dispatched Qty"] * pdf_df["Rate"]
 
@@ -159,12 +159,11 @@ def loadDataZepto(
             [zepto_product_info_df, locationSeries], axis=1
         )
 
-        location_seprated_df[location]["rate"] = location_seprated_df[location]["rate"]
+        # location_seprated_df[location]["rate"] = location_seprated_df[location]["rate"]
 
-        location_seprated_df[location]["amount"] = (
-            location_seprated_df[location]["rate"]
-            * location_seprated_df[location]["invoice qty."]
-        )
+        location_seprated_df[location]["amount"] = location_seprated_df[location][
+            "rate"
+        ] * location_seprated_df[location]["invoice qty."].astype(float)
 
         location_seprated_df[location].columns = [
             "article name",

@@ -123,7 +123,8 @@ class PDF:
             str(df["Dispatched Qty"].apply(int).sum()),
             "",
             "",
-            str(df["Total Amount"].apply(int).sum()),
+            # str(df["Rate"].apply(float).sum()),
+            str(df["Total Amount"].apply(float).sum()),
         ]
         df = (
             [[Paragraph(pdfColumn, self.__headingStyle) for pdfColumn in df.columns]]
