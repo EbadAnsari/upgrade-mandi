@@ -309,6 +309,12 @@ domainConfigClass: dict[str, Union[d.Swiggy, d.Zepto]] = {
                 code="G",
             ),
             location.Location(
+                name="Hudkeshwar",
+                shippingAddress="Drogheria Sellers Private Limited, NAG-Hudkeshwar (NAG012S), Plot No5912, Sanskruti Society, Nagpur Urban, Nagpur",
+                retailer="Dorgheria",
+                code="HU",
+            ),
+            location.Location(
                 name="Jaripatka",
                 shippingAddress="DROGHERIA SELLERS PVT LTD,DS-NAG-Jaripatka The sec bezonbag pragatisheel kamgar gruh nirman sahkari sunstha bezonbag Nagpur - 4400004",
                 retailer="Dorgheria",
@@ -325,6 +331,12 @@ domainConfigClass: dict[str, Union[d.Swiggy, d.Zepto]] = {
                 shippingAddress="Drogheria Sellers Pvt Ltd, DS-NAG-Raghuji Nagar Pragati Sabhgruh, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440024 Nagpur 440024",
                 retailer="Dorgheria",
                 code="R",
+            ),
+            location.Location(
+                name="Vaishali Nagar",
+                shippingAddress="Drogheria Sellers Private Limited, NAG-Vaishali Nagar (NAG014S), Plot No 419 Nit Lay Out Near Rani Durgawati Chowk Nagpur",
+                retailer="Dorgheria",
+                code="VN",
             ),
             location.Location(
                 name="Zingabai Takali",
