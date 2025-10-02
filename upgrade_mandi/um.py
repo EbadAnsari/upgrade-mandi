@@ -19,15 +19,20 @@ def execSwiggy(
     invoice_version: int,
     sheet_name: str,
     base_path: str,
-    domain: d.DomainSelection,
 ):
+    domain: d.Swiggy = domainConfigClass["Swiggy"]  # type: ignore
+    domain.invoiceVersion = invoice_version
+
     rawDF, pdfColumns, date = loadDataSwiggy(file, sheet_name, domain)
-    folderPathForSwiggyPdf = join(base_path, "Swiggy", date.toString(), "pdfs")
+    folderPathForSwiggyPdf = join(
+        base_path,
+        "Swiggy",
+        date.toString(),
+        f"pdfs{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}",
+    )
     folderPathForSwiggyExcel = join(base_path, "Swiggy", date.toString(), "excels")
     makedirs(folderPathForSwiggyPdf, exist_ok=True)
     makedirs(folderPathForSwiggyExcel, exist_ok=True)
-
-    domain.invoiceVersion = invoice_version
 
     invoice_formated_df = convert2TableFormat(rawDF, domain, pdfColumns)
     pdf = PDF(domain, invoice_formated_df, date)
@@ -45,17 +50,25 @@ def execZepto(
     date: date.Date,
     location_po: dict[str, str] = {},
 ):
+    domain.invoiceVersion = invoice_version
 
     # creating output directories
-    folder_path_for_zepto_pdf = join(base_path, "Zepto", date.toString(), "pdfs")
+    folder_path_for_zepto_pdf = join(
+        base_path,
+        "Zepto",
+        date.toString(),
+        f"pdfs{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}",
+    )
+    print(
+        f"pdfs{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}"
+    )
+
     folder_path_for_zepto_excel = join(base_path, "Zepto", date.toString(), "excels")
     makedirs(folder_path_for_zepto_pdf, exist_ok=True)
     makedirs(folder_path_for_zepto_excel, exist_ok=True)
 
     # load and format the raw sheet of Zepto domain
     invoice_formated_df = loadDataZepto(file, sheet_name, domain)
-
-    domain.invoiceVersion = invoice_version
 
     pdf = Zepto_PDF(domain, invoice_formated_df, date, location_po)
     pdf.buildPDF(folder_path_for_zepto_pdf)
@@ -85,8 +98,8 @@ def main(
 
     console.clear()
     if domain_string == "Swiggy":
-        execSwiggy(file, invoice_version, sheet_name, base_path, domain)
-    elif domain_string == "Zepto":
+        execSwiggy(file, invoice_version, sheet_name, base_path)
+    elif domain_string == "Zepto" and date is not None:
         execZepto(
             file, invoice_version, sheet_name, base_path, domain, date, location_po
         )

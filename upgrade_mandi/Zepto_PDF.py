@@ -1,15 +1,15 @@
 from datetime import datetime
 from os.path import join
-from typing import List
+from typing import Any, List, Tuple
 
 import pandas as pd
-from pre import loadDataZepto
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 from utils import config
+from utils.load import loadDataZepto
 from utils.types import date
 from utils.types import domain as d
 from utils.types import location
@@ -60,7 +60,7 @@ class Zepto_PDF:
     def __init__(
         self,
         domain: d.DomainSelection,
-        data: dict[str, dict],
+        data: dict[str, pd.DataFrame],
         date: date.Date,
         locationPo: dict[str, str] = {},
     ):
@@ -163,7 +163,8 @@ class Zepto_PDF:
         )
 
     def __preprocessData(self, df: pd.DataFrame) -> List[List[Paragraph]]:
-        summaryRow = [
+        df["Sr"] = range(1, len(df) + 1)
+        summaryRow: List[str] = [
             "Total",
             "",
             "",
@@ -172,22 +173,22 @@ class Zepto_PDF:
             "",
             str(round(df["Amount"].apply(float).sum(), 2)),
         ]
-        df = (
-            [
+
+        matrix_to_process: Tuple[List[Paragraph], List[List[Any]]] = (
+            (
                 [
                     Paragraph(pdfColumn, self.__headingStyleCentered)
                     for pdfColumn in df.columns
                 ]
-            ]
-            + df.values.tolist()
-            + [summaryRow]
+            ),
+            df.values.tolist() + [summaryRow],
         )
 
-        for index, row in enumerate(df[1:-1], start=1):
-            row[0] = index
+        for index, row in enumerate(matrix_to_process[1][1:-1], start=1):
+            # row[0] = str(index)
             for i in range(len(row)):
                 row[i] = Paragraph(str(row[i]), self.__bodyStyle)
-        return df
+        return [matrix_to_process[0]] + matrix_to_process[1]
 
     def __createFooter(self):
         footerStyle = ParagraphStyle(
@@ -258,5 +259,5 @@ class Zepto_PDF:
 
 if __name__ == "__main__":
     data = loadDataZepto("./raw-sheets-dump/new.xlsx", d.Zepto, "Sheet1")
-    pdf = Zepto_PDF(config.domainConfigClass["Zepto"], data, datetime.now(), 1)
+    pdf = Zepto_PDF(config.domainConfigClass["Zepto"], data, date.Date("21-08-2025"), 1)
     pdf.buildPDF("./output/Zepto/21-08-2025/pdfs")

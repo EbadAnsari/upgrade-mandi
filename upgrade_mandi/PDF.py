@@ -1,5 +1,5 @@
 from os.path import join
-from typing import List
+from typing import Any, List, Tuple
 
 import pandas as pd
 from reportlab.lib import colors
@@ -40,7 +40,7 @@ class PDF:
     def __init__(
         self,
         domain: d.DomainSelection,
-        data: dict[str, dict],
+        data: dict[str, pd.DataFrame],
         date: date.Date,
     ):
 
@@ -126,17 +126,16 @@ class PDF:
             # str(df["Rate"].apply(float).sum()),
             str(df["Total Amount"].apply(float).sum()),
         ]
-        df = (
-            [[Paragraph(pdfColumn, self.__headingStyle) for pdfColumn in df.columns]]
-            + df.values.tolist()
-            + [summaryRow]
+        matrix_to_process: Tuple[List[Paragraph], List[List[Any]]] = (
+            ([Paragraph(pdfColumn, self.__headingStyle) for pdfColumn in df.columns]),
+            df.values.tolist() + [summaryRow],
         )
 
-        for index, row in enumerate(df[1:-1], start=1):
-            row[0] = index
+        for index, row in enumerate(matrix_to_process[1][1:-1], start=1):
+            # row[0] = index
             for i in range(len(row)):
                 row[i] = Paragraph(str(row[i]), self.__bodyStyle)
-        return df
+        return [matrix_to_process[0]] + matrix_to_process[1]
 
     def buildPDF(self, folderPathForPdf: str):
 

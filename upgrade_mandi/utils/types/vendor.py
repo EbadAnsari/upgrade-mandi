@@ -6,7 +6,7 @@ from .mobile import Mobile
 
 
 class VendorConfig(BaseModel):
-    name: Union[Literal["Upgrade Mandi"]]
+    name: Literal["Upgrade Mandi"]
     code: str
     email: str
     mobile: Mobile

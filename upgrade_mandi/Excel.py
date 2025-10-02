@@ -1,8 +1,10 @@
 from os.path import join
+from typing import Any
 
 import pandas as pd
 from utils.types import address, date
 from utils.types import domain as d
+from xlsxwriter import Workbook
 
 # import utils.types as types
 
@@ -22,7 +24,7 @@ class Excel:
 
 
 def toExcelSwiggy(
-    df: pd.DataFrame,
+    df: dict[str, pd.DataFrame],
     domain: d.DomainSelection,
     date: date.Date,
     baseFolerPath: str,
@@ -51,7 +53,9 @@ def toExcelSwiggy(
                 freeze_panes=(6, 0),
             )
 
-            workBook = xlW.book
+            workBook: Workbook | Any = xlW.book
+            if workBook is None:
+                raise Exception("workBook is None")
             workSheet = xlW.sheets[sheetName]
 
             headerCellFormat = workBook.add_format(
@@ -107,6 +111,8 @@ def toExcelSwiggy(
             workSheet.merge_range(
                 3, 3, 3, 7, "Email: ankushmisal7387@gmail.com", headerCellFormat
             )
+            if domain.vendor.supplierId is None:
+                raise Exception("Supplier id is None")
             workSheet.merge_range(
                 4,
                 3,
@@ -137,7 +143,7 @@ def toExcelSwiggy(
 
 
 def toExcelZepto(
-    df: pd.DataFrame,
+    df: dict[str, pd.DataFrame],
     domain: d.DomainSelection,
     date: date.Date,
     baseFolderPathExcel: str,
@@ -146,7 +152,11 @@ def toExcelZepto(
     stringDate = date.toString()
 
     with pd.ExcelWriter(
-        join(baseFolderPathExcel, f"{stringDate}.xlsx"), engine="xlsxwriter"
+        join(
+            baseFolderPathExcel,
+            f"{stringDate}{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}.xlsx",
+        ),
+        engine="xlsxwriter",
     ) as xlW:
         for location in domain.locations:
             activeDF = df[location.name]
@@ -163,7 +173,9 @@ def toExcelZepto(
                 freeze_panes=(8, 0),
             )
 
-            workBook = xlW.book
+            workBook: Workbook | Any = xlW.book
+            if workBook is None:
+                raise Exception("workBook is None")
             workSheet = xlW.sheets[sheetName]
 
             title = workBook.add_format(

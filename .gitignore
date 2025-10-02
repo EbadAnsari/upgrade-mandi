@@ -68,3 +68,5 @@ target/
 !/upgrade_mandi/utils/reader/reader/dll/release/reader.dll
 !/upgrade_mandi/utils/reader/reader/dll/release
 b2b
+
+*.java*

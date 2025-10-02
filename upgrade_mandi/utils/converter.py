@@ -9,10 +9,9 @@ def convert2TableFormat(
     domain: d.Swiggy,
     selectedColumns: List[str],
 ):
-    if domain.domainName == "Swiggy":
-        return {
-            location.name: df[df["Location"] == location.name][
-                selectedColumns
-            ].reset_index(drop=True)
-            for location in domain.locations
-        }
+    return {
+        location.name: df[df["Location"] == location.name][selectedColumns].reset_index(
+            drop=True
+        )
+        for location in domain.locations
+    }
