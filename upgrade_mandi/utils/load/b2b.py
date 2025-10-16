@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, List, Tuple
 
+import numpy as np
 import pandas as pd
 from utils.read import readExcel
 from utils.types import date
@@ -18,8 +19,81 @@ class Customer:
         return f"{self.customer_name} - {self.location}"
 
 
+def filter_b2b(file_name: str, sheet_name="ALL DATA") -> pd.DataFrame:
+    # %%
+    df = pd.read_excel(file_name, sheet_name)
+
+    df.columns = [i.strip().title() for i in df.columns]
+    df = (
+        df.dropna(how="all")
+        .drop(
+            labels=["Sr No", "Total Amount", "Overall"],
+            axis=1,
+        )
+        .dropna(how="all")
+    )
+
+    # %%
+    def formatDate(row: pd.Series) -> pd.Timestamp | float:
+        try:
+            return pd.to_datetime(row["Date"])
+        except:
+            return np.nan
+
+    df["Date"] = df.apply(formatDate, axis=1).ffill()
+
+    # %%
+    df.dropna(subset=df.columns.difference(["Date"]), how="all", inplace=True)
+
+    # %%
+    df[["Name", "Address"]] = (
+        df[["Name", "Address"]]
+        .ffill()
+        .apply(
+            lambda srs: pd.Series(
+                name=srs.name, data=[str(string).title() for string in srs]
+            ),
+            axis=1,
+        )
+    )
+
+    df["Item Name"] = df["Item Name"].apply(lambda name: str(name).title())
+
+    # %%
+    lst = [
+        "Red Onion Premium Wholesale",
+        "Red Onion Premium Retail",
+        "White onion Wholesale",
+        "White onion Retail",
+        "Agra potato Premium Wholesale",
+        "Agra Potato Premium Retail",
+        "Agra Potato Retail Big",
+        "G4 potato Wholesale",
+        "G4 Potato Retail",
+        "Ginger Banglore",
+        "Garlic Regular",
+        "Garlic Bolder",
+        "Onion B",
+        "Potato B",
+        "Ginger B",
+        "White Onion B",
+        "Potato Small",
+    ]
+
+    # %%
+    df = df.dropna(
+        subset=[
+            "Item Name",
+        ],
+        how="all",
+    )
+
+    # %%
+    return df
+
+
 def loadDateB2B(file_location: str, sheet_name: str):
-    df = readExcel(file_location, sheetName=sheet_name)
+    df = filter_b2b(file_location, sheet_name)
     df.columns = [column.strip().title() for column in df.columns]
 
     # %%
@@ -54,7 +128,8 @@ def loadDateB2B(file_location: str, sheet_name: str):
     df[["Address", "Name", "Item Name"]] = df[["Address", "Name", "Item Name"]].apply(
         lower
     )
-    df[["Qty", "Rate"]] = df[["Qty", "Rate"]].astype(int)
+
+    df[["Qty", "Rate"]] = df[["Qty", "Rate"]].astype(float)
 
     df["Date"] = pd.to_datetime(df["Date"]).apply(
         lambda date: date.strftime("%d-%m-%Y")

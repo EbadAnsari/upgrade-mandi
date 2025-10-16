@@ -30,6 +30,21 @@ def selectRawExcelFile() -> str:
     )
 
 
+def select_file_from(folder_path: str, pattern: str) -> str:
+    fileNameList = utils.file_name_sorted(join(folder_path, pattern))
+    if len(fileNameList) == 0:
+        print(f"❌ No file found in '{folder_path}' folder.")
+        exit(0)
+    rootFolder = fileNameList[0].rsplit("\\", 1)[0]
+    return join(
+        rootFolder,
+        selectBox(
+            prompt=f"Select a file from '{folder_path}'",
+            listOptions=[fileName.rsplit("\\", 1)[1] for fileName in fileNameList],
+        ),
+    )
+
+
 def selectDomain():
     return selectBox(
         prompt="Select domain", listOptions=list(config.domainConfigClass.keys())

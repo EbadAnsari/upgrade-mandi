@@ -8,9 +8,11 @@ from utils.read import getSheetNames
 from utils.types import date
 
 
-def main():
-    data = loadDateB2B("./data/processed/B2B/Transaction List.xlsx", "Sheet1")
+def main(file: str, sheet_name: str, _date: date.Date | None = None) -> None:
+    data = loadDateB2B(file, sheet_name)
     for key in data.keys():
+        if _date is not None and key != _date.toString("-"):
+            continue
         print(key)
         for customer in data[key]:
             dt = date.Date(key)
@@ -20,15 +22,15 @@ def main():
 
 if __name__ == "__main__":
 
-    main()
-
-    exit(0)
+    # exit(0)
 
     makedirs("./raw-sheets-dump/b2b", exist_ok=True)
 
     console.clear()
 
-    file = console.select_file_from(join(config.PROJECT_SRC, "output", "b2b"), "*.xlsx")
+    file = console.select_file_from(
+        join(config.PROJECT_SRC, "data", "raw", "B2B"), "*.xlsx"
+    )
 
     sheetNames = getSheetNames(file)
     if len(sheetNames) > 1:
@@ -37,8 +39,11 @@ if __name__ == "__main__":
         sheetName = sheetNames[0]
 
     for_all = console.yeNo("For all")
-    if for_all:
-        pass
-    _date = date.Date(console.prompt("Enter the date in DD-MM-YYYY format: ").strip())
+    if not for_all:
+        _date = date.Date(
+            console.prompt("Enter the date in DD-MM-YYYY format: ").strip()
+        )
 
-    invoiceVersion = int(console.readInvoiceVersion())
+    # invoiceVersion = int(console.readInvoiceVersion())
+
+    main(file, sheetName, _date if not for_all else None)
