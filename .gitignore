@@ -70,3 +70,6 @@ target/
 b2b
 
 *.java*
+*.class*
+
+upgrade-mandi-web/
