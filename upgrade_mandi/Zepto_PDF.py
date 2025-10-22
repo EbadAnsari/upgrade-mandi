@@ -163,7 +163,7 @@ class Zepto_PDF:
         )
 
     def __preprocessData(self, df: pd.DataFrame) -> List[List[Paragraph]]:
-        df["Sr"] = range(1, len(df) + 1)
+        # df["Sr"] = range(1, len(df) + 1)
         summaryRow: List[str] = [
             "Total",
             "",
@@ -241,7 +241,7 @@ class Zepto_PDF:
             footer.setStyle(self.__tableStyle)
 
             pdf = SimpleDocTemplate(
-                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}.pdf",
+                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}{' - ' + str(self.domain.invoiceVersion) if self.domain.invoiceVersion > 1 else ''}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,

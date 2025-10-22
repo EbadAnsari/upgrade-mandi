@@ -30,9 +30,11 @@ def toExcelSwiggy(
     baseFolerPath: str,
 ):
     stringDate = date.toString()
-    with pd.ExcelWriter(
-        join(baseFolerPath, f"{stringDate}.xlsx"), engine="xlsxwriter"
-    ) as xlW:
+    excel_file_naeme = join(
+        baseFolerPath,
+        f"{stringDate} - Swiggy{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}.xlsx",
+    )
+    with pd.ExcelWriter(join(excel_file_naeme), engine="xlsxwriter") as xlW:
         for location in domain.locations:
             activeDF = df[location.name]
             if activeDF.empty:
@@ -151,10 +153,14 @@ def toExcelZepto(
 ):
     stringDate = date.toString()
 
+    excel_file_naeme = join(
+        baseFolderPathExcel,
+        f"{stringDate} - Zepto{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}.xlsx",
+    )
+
     with pd.ExcelWriter(
         join(
-            baseFolderPathExcel,
-            f"{stringDate}{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}.xlsx",
+            excel_file_naeme,
         ),
         engine="xlsxwriter",
     ) as xlW:

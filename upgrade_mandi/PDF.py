@@ -155,7 +155,7 @@ class PDF:
             table.setStyle(self.__tableStyle)
 
             pdf = SimpleDocTemplate(
-                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}.pdf",
+                filename=f"{folderPathForPdf}/{self.date.toString()} - {location.name}{' - ' + str(self.domain.invoiceVersion) if self.domain.invoiceVersion > 1 else ''}.pdf",
                 pagesize=A4,
                 topMargin=30,
                 bottomMargin=30,
