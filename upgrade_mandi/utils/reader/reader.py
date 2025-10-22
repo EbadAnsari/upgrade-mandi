@@ -1,13 +1,16 @@
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as __np
 import pandas as __pd
+from pyparsing import col
 
 from . import dll as __dll
 from . import test
 
 
-def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
+def read_excel(
+    file_path: str, sheet_name: str
+) -> Tuple[__pd.DataFrame, __pd.DataFrame]:
     """Reads an Excel file and returns its contents as a pandas DataFrame.
 
     Args:
@@ -27,16 +30,24 @@ def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
 
     table = table_ptr.contents
 
-    # print(table.data[90].kind)
-    # print(table.data[90].value.decode("utf-8"))
-    # print()
-    # flat_list = []
+    dtype = __pd.DataFrame()
+
     df = __pd.DataFrame()
     matrix = []
+
+    cell_type_map_dict = [
+        lambda x: __np.nan,
+        __np.str_,
+        __np.int64,
+        __np.float64,
+        __np.bool,
+        __pd.to_datetime,
+    ]
+
     for row in range(table.rows):
         _row = []
-        for col in range(table.cols):
-            cell = table.data[row * table.cols + col]
+        for col_index in range(table.cols):
+            cell = table.data[row * table.cols + col_index]
             value = cell.value.decode("utf-8")
 
             if cell.kind == 0:
@@ -49,14 +60,23 @@ def read_excel(file_path: str, sheet_name: str) -> __pd.DataFrame:
                 _row.append(float(value))
             elif cell.kind == 4:
                 _row.append(value)
-        if row == 0:
-            for column_name in _row:
-                df[column_name] = []
-        else:
-            matrix.append(_row)
+        matrix.append(_row)
     __dll.free_table(table_ptr)
-    df = __pd.concat(
-        [df, __pd.DataFrame(matrix, columns=df.columns)], axis=0, ignore_index=True
-    )
+
+    repeated_index_count: dict[str, int] = {}
+
+    column_names = []
+
+    for index, column_name in enumerate(matrix[0]):
+        if column_name not in repeated_index_count:
+            repeated_index_count[column_name] = -1
+        repeated_index_count[column_name] += 1
+
+        matrix[0][
+            index
+        ] = f"{column_name}{f' ({repeated_index_count[column_name]})' if repeated_index_count[column_name] > 0 else ''}"
+
+    df = __pd.DataFrame(matrix[1:], columns=matrix[0])
     df.dropna(axis=0, how="all", inplace=True)
-    return df
+
+    return (df, dtype)

@@ -59,6 +59,7 @@ def execZepto(
         date.toString(),
         f"pdfs{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}",
     )
+
     print(
         f"pdfs{' - ' + str(domain.invoiceVersion) if domain.invoiceVersion > 1 else ''}"
     )

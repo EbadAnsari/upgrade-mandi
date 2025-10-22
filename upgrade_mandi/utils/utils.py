@@ -36,3 +36,11 @@ def fileInRawSheet() -> List[str]:
         key=getmtime,
         reverse=True,
     )
+
+
+def file_name_sorted(folder_path: str) -> List[str]:
+    return sorted(
+        glob(folder_path),
+        key=getmtime,
+        reverse=True,
+    )
