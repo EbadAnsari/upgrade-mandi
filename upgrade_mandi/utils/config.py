@@ -7,13 +7,14 @@ import os
 from pathlib import Path
 from typing import Union
 
-from dotenv import load_dotenv
-
 from .types import column, database
 from .types import domain as d
 from .types import invoice, location, mobile, table, vendor
 
-load_dotenv()
+# from dotenv import load_dotenv
+
+
+# load_dotenv()
 
 # Project root directory
 PROJECT_SRC = Path(__file__).parent.parent
