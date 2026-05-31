@@ -38,7 +38,7 @@ if __name__ == "__main__":
     else:
         sheetName = sheetNames[0]
 
-    for_all = console.yeNo("For all")
+    for_all = console.yesNo("For all")
     if not for_all:
         _date = date.Date(
             console.prompt("Enter the date in DD-MM-YYYY format: ").strip()

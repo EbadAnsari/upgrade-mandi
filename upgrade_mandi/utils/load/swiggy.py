@@ -16,6 +16,8 @@ def loadDataSwiggy(
     domain = domainConfigClass["Swiggy"]
     df = readExcel(file, sheetName=sheet_name)
 
+    print(df)
+
     try:
         df = df.dropna(how="all")[
             [

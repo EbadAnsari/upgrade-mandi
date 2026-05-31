@@ -14,7 +14,7 @@ def loadDataSwiggy(
     file: str, sheet_name: str, domain: d.Swiggy
 ) -> tuple[pd.DataFrame, list[Any], date.Date]:
     print(f"Reading file: {file}")
-    df, dtype = readExcel(file, sheetName=sheet_name)
+    df, _ = readExcel(file, sheetName=sheet_name)
 
     try:
         df = df.dropna(how="all")[
@@ -93,10 +93,10 @@ def loadDataSwiggy(
 def pre_processing_zepto(
     file_name: str, sheet_name: str, domain: d.DomainSelection
 ) -> Tuple[pd.DataFrame, pd.DataFrame, List[str]]:
-    df = readExcel(
+    df, _ = readExcel(
         file_name,
         sheetName=sheet_name,
-    )[0]
+    )
     # %%
     # al the columns are converted to lower case and stripped of leading/trailing spaces.
     df.columns = df.columns.str.lower().str.strip()

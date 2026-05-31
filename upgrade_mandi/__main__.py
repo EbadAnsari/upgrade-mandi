@@ -26,7 +26,7 @@ if __name__ == "__main__":
         _date = date.Date(
             console.prompt("Enter the date in DD-MM-YYYY format: ").strip()
         )
-        haveInvoice = console.yeNo("Have PO no")
+        haveInvoice = console.yesNo("Have PO no")
         if haveInvoice:
             locationPo = {
                 location.name: input(f"{location.name}: ")

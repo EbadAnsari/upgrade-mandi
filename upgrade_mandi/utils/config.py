@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from typing import Union
 
-from .types import column, database
+from .types import database
 from .types import domain as d
 from .types import invoice, location, mobile, table, vendor
 

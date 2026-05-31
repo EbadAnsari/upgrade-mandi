@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 import pandas as pd
 from pydantic import BaseModel
@@ -9,8 +9,8 @@ class ReturnType:
     fileName: str
     sheetName: str
     domain: str
-    date: types.Date
-    locationPo: Union[dict[str, str]]
+    date: types.date.Date
+    locationPo: dict[str, str]
     invoiceVersion: int
 
 
@@ -20,7 +20,7 @@ class Input(BaseModel, ReturnType):
         return console.selectRawExcelFile()
 
     def __selectSheet(self):
-        sheetNames: List[str] = pd.ExcelFile(self.fileName).sheet_names
+        sheetNames: List[int | str] = pd.ExcelFile(self.fileName).sheet_names
         if len(sheetNames) > 1:
             return console.selectBox("Select a sheet", sheetNames)
         return sheetNames[0]
@@ -47,7 +47,7 @@ class Input(BaseModel, ReturnType):
         locationPo: dict[str, str] = {}
         if domain == "Zepto":
             date = self.__selectDate()
-            haveInvoice = console.yeNo("Have PO no")
+            haveInvoice = console.yesNo("Have PO no")
             if haveInvoice:
                 locationPo = self.__enterPO()
 

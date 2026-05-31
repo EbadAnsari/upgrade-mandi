@@ -7,7 +7,7 @@ import inquirer
 from . import config, utils
 
 
-def selectBox(prompt: str, listOptions: List[str]) -> str:
+def selectBox(prompt: str, listOptions: List[int | str]) -> str:
     return inquirer.list_input(prompt, choices=listOptions)
 
 
@@ -51,7 +51,7 @@ def selectDomain():
     )
 
 
-def yeNo(prompt: str):
+def yesNo(prompt: str):
     response = selectBox(prompt, listOptions=["Yes", "No"])
     if response == "Yes":
         return True

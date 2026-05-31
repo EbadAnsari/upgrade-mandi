@@ -23,5 +23,5 @@ class CommonDomainConfig(BaseModel):
     vendor: VendorConfig
     columns: List[ColumnConfig] = Field(default_factory=list)
     locations: List[Location] = Field(default_factory=list)
-    domainName: Union[Literal["Swiggy"], Literal["Zepto"]] = None
+    domainName: Union[Literal["Swiggy"], Literal["Zepto"], None] = None
     invoiceVersion: int = 1
