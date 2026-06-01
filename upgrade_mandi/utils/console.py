@@ -7,7 +7,7 @@ import inquirer
 from . import config, utils
 
 
-def selectBox(prompt: str, listOptions: List[int | str]) -> str:
+def selectBox(prompt: str, listOptions: List[str]) -> str:
     return inquirer.list_input(prompt, choices=listOptions)
 
 
@@ -45,10 +45,8 @@ def select_file_from(folder_path: str, pattern: str) -> str:
     )
 
 
-def selectDomain():
-    return selectBox(
-        prompt="Select domain", listOptions=list(config.domainConfigClass.keys())
-    )
+def selectDomain(domainList: List[str]) -> str:
+    return selectBox(prompt="Select domain", listOptions=domainList)
 
 
 def yesNo(prompt: str):

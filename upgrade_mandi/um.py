@@ -93,7 +93,6 @@ def main(
     sheet_name: str,
     date: Optional[date.Date],
     location_po: dict[str, str] = {},
-    df: pd.DataFrame = pd.DataFrame(),
 ):
     domain: d.DomainSelection = domainConfigClass[domain_string.title()]
 

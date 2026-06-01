@@ -1,5 +1,6 @@
 from os import makedirs
 
+from report import rawToReport
 from um import main
 from utils import config, console
 from utils.read import getSheetNames
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         sheetName = console.selectBox("Select a sheet", sheetNames)
     else:
         sheetName = sheetNames[0]
-    domain = console.selectDomain()
+    domain = console.selectDomain(list(config.domainConfigClass.keys()) + ["Report"])
 
     _date = None
     locationPo: dict[str, str] = {}
@@ -32,6 +33,9 @@ if __name__ == "__main__":
                 location.name: input(f"{location.name}: ")
                 for location in config.domainConfigClass["Zepto"].locations
             }
-
-    invoiceVersion = int(console.readInvoiceVersion())
-    main(file, domain, invoiceVersion, sheetName, _date, locationPo)
+    if domain == "Report":
+        # Handle the "Raw to Report" domain
+        rawToReport(file)
+    else:
+        invoiceVersion = int(console.readInvoiceVersion())
+        main(file, domain, invoiceVersion, sheetName, _date, locationPo)
