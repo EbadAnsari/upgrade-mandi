@@ -22,7 +22,7 @@ def rawToReport(filePath: str):
     groupByProductName = df.groupby("item_code")
 
     # %%
-    columnOrder = ["Product Name", "Item Code", "Weight", "Indents", "Final"]
+    columnOrder = ["Sr No", "Product Name", "Item Code", "Weight", "Indents", "Final"]
 
     final = groupByProductName.agg(
         {"product_name": "first", "weight": "first", "indents": "sum"}
@@ -40,10 +40,13 @@ def rawToReport(filePath: str):
     )
     final = final.reset_index()
     final.index = final.index + 1
+    final = final.reset_index()
+
 
     final["item_code"] = final["item_code"].astype(int)
     final = final.rename(
         {
+            "index": "Sr No",
             "product_name": "Product Name",
             "weight": "Weight",
             "indents": "Indents",
@@ -51,6 +54,22 @@ def rawToReport(filePath: str):
         },
         axis=1,
     )
+
+    # %%
+    summaryRow = pd.DataFrame(
+        {
+            "Sr No": [""],
+            "Item Code": [""],
+            "Product Name": [""],
+            "Weight": [""],
+            "Indents": [f'Total: {final["Indents"].sum().astype(int)}'],
+            "Final": [""],
+        }
+    )
+    print(final.head(1))
+    print(summaryRow.head(1))
+
+    final = pd.concat([final, summaryRow])
 
     # %%
     makedirs("./output/Report", exist_ok=True)
@@ -67,11 +86,10 @@ def rawToReport(filePath: str):
         final[columnOrder].to_excel(
             writer,
             sheet_name="Final Report",
-            index=True,
+            index=False,
             engine="openpyxl",
             freeze_panes=(1, 0),
             columns=columnOrder,
-            index_label="Sr No",
         )
 
         workbook = writer.book
