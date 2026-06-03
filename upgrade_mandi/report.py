@@ -42,7 +42,6 @@ def rawToReport(filePath: str):
     final.index = final.index + 1
     final = final.reset_index()
 
-
     final["item_code"] = final["item_code"].astype(int)
     final = final.rename(
         {
@@ -66,8 +65,6 @@ def rawToReport(filePath: str):
             "Final": [""],
         }
     )
-    print(final.head(1))
-    print(summaryRow.head(1))
 
     final = pd.concat([final, summaryRow])
 

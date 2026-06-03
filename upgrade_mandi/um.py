@@ -39,9 +39,9 @@ def execSwiggy(
     invoice_formated_df = convert2TableFormat(rawDF, domain, pdfColumns)
 
     pdf = PDF(domain, invoice_formated_df, date)
-    # pdf.buildPDF(folderPathForSwiggyPdf)
+    pdf.buildPDF(folderPathForSwiggyPdf)
 
-    # toExcelSwiggy(invoice_formated_df, domain, date, folderPathForSwiggyExcel)
+    toExcelSwiggy(invoice_formated_df, domain, date, folderPathForSwiggyExcel)
 
 
 def execZepto(
