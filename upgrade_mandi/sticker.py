@@ -52,14 +52,14 @@ def rawToSticker(
     dayOfTheWeek = shelfLife.columns[8:15][day]
 
     # %%
-    finalDf[dayOfTheWeek] = finalDf.merge(
+    finalDf["Day"] = finalDf.merge(
         shelfLife, how="inner", left_on="ITEM_CODE", right_on="Article Code"
     )[dayOfTheWeek]
 
     # %%
     finalDf["ITEM_CODE"] = finalDf["ITEM_CODE"].astype(int)
     nx["ITEM_CODE"] = nx["ITEM_CODE"].astype(int)
-    finalDf["Day"] = finalDf[dayOfTheWeek].astype(int)
+    finalDf["Day"] = finalDf["Day"].astype(int)
 
     # %%
     finalDf["ID"] = finalDf.apply(
