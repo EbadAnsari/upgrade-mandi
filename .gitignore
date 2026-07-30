@@ -32,6 +32,9 @@ ENV/
 # Data files (optional - if data shouldn't be tracked)
 *.csv
 *.xlsx
+!/upgrade_mandi/nx/**
+!/upgrade_mandi/shelf-life/**
+
 
 # Streamlit specific
 .streamlit/
