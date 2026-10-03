@@ -2,7 +2,7 @@ import pandas as pd
 from utils.read import readExcel
 
 
-def rawToSticker(
+def rawToZeptoSticker(
     filepath: str,
     sheetName: str,
     shelfLifeFileName: str,
