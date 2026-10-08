@@ -47,7 +47,6 @@ if __name__ == "__main__":
             nxSheetName = _nxSheetNames[0]
 
     if domain == "Blinkit Sticker":
-        print(console.root())
         itemIdFileName = console.select_file_from(console.root(), "item-id", "*.xlsx")
         _itemIdSheetNames = getSheetNames(itemIdFileName)
         if len(_itemIdSheetNames) > 1:
