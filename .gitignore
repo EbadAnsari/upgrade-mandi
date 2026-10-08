@@ -34,6 +34,7 @@ ENV/
 *.xlsx
 !/upgrade_mandi/nx/**
 !/upgrade_mandi/shelf-life/**
+!/upgrade_mandi/item-id/**
 
 
 # Streamlit specific
