@@ -10,7 +10,7 @@ from . import config, utils
 class ConsolePath:
     @staticmethod
     def root():
-        return join(Path.cwd(), "upgrade_mandi")
+        return join(Path.cwd())
 
     @staticmethod
     def output():
@@ -41,7 +41,7 @@ class ConsolePath:
         return join(ConsolePath.root(), "shelf-life")
 
 def root():
-    return join(Path.cwd(), "upgrade_mandi")
+    return join(Path.cwd())
 
 
 def selectBox(prompt: str, listOptions: List[str]) -> str:
